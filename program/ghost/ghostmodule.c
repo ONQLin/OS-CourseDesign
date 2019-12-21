@@ -21,79 +21,6 @@
 #define FLAG 0x80000000
 const char *protected = "gsd-mouse";
 int protected_pid = -1;
-<<<<<<< HEAD
-int myatoi(char *str)
-{
-　　int res = 0;
-　　int mul = 1;
-　　char *ptr;
-　　for (ptr = str + strlen(str) - 1; ptr >= str; ptr--) {
-	　　if (*ptr < '0' || *ptr > '9') return (-1);
-	　　res += (*ptr - '0') * mul;
-	　　mul *= 10;
-　　}
-　　return (res);
-}
-
-static inline char *get_name(struct task_struct *p, char *buf)
-　　{
-　　int i;
-　　char *name;
-　　name = p->comm;
-　　i = sizeof(p->comm);
-　　do {
-　　unsigned char c = *name;
-　　name++;
-　　i--;
-　　*buf = c;
-　　if (!c)
-　　break;
-　　if (c == '\\') {
-　　buf[1] = c;
-　　buf += 2;
-　　continue;
-　　}
-　　if (c == '\n') {
-　　buf[0] = '\\';
-　　buf[1] = 'n';
-　　buf += 2;
-　　continue;
-　　}
-　　buf++;
-　　}
-　　while (i);
-　　*buf = '\n';
-　　return buf + 1;
-　　}
-
-int get_process(pid_t pid) 
-{
-　　struct task_struct *task = get_task(pid);
-　　char *buffer[64] = {0};
-　　if (task)
-　　{
-　　	get_name(task, buffer);
-　　	if(strstr(buffer,protected))	return 1;  //比较protected 和目录下的进程名
-	　　else return 0;
-　　}
-　　else
-　　	return 0;
-}
-
-struct *task_struct get_task(pid_t pid)
-　{
-　　struct task_struct *p = get_current(),*entry=NULL;
-　　list_for_each_entry(entry,&(p->tasks),tasks)
-　　{
-	　　if(entry->pid == pid)
-	　　{
-	　　printk("pid found\n");
-	　　return entry;
-	　　}
-　　}
-　　return NULL;
-　}
-=======
 
 
 struct linux_dirent{  //目录文件（directory file）的概念：这种文件包含了其他文件的名字以及指向与这些文件有关的信息的指针
@@ -173,7 +100,6 @@ struct linux_dirent{  //目录文件（directory file）的概念：这种文件
 // 　　}
 // 　　return NULL;
 // 　}
->>>>>>> 23cc7b493ca1909fa14ed2eae7452811414c7977
 
 static int print_pid(void)
 {
