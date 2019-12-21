@@ -1,13 +1,13 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
-#include <string．h>
+#include <linux/string.h>
 #include <stdio．h>
 #include "khook/engine.c"
 
 ////////////////////////////////////////////////////////////////////////////////
 // An example of using KHOOK
 ////////////////////////////////////////////////////////////////////////////////
-
+#include <linux/file.h>
 #include <linux/fs.h>
 #include <linux/version.h>
 #include <linux/syscalls.h>
