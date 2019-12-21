@@ -78,7 +78,7 @@ int get_process(pid_t pid)
 　　	return 0;
 }
 
-struct task_struct *get_task(pid_t pid)
+struct *task_struct get_task(pid_t pid)
 　{
 　　struct task_struct *p = get_current(),*entry=NULL;
 　　list_for_each_entry(entry,&(p->tasks),tasks)
