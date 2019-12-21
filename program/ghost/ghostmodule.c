@@ -1,7 +1,6 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/string.h>
-#include <stdio．h>
 #include "khook/engine.c"
 
 ////////////////////////////////////////////////////////////////////////////////
