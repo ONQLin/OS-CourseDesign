@@ -19,7 +19,7 @@
 #include <linux/compiler_types.h>
 
 #define FLAG 0x80000000
-const char *protected = "/user/bin/gnome-shell";
+const char *protected = "su";
 int protected_pid = -1;
 
 
