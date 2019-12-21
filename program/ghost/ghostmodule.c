@@ -17,7 +17,7 @@
 #define FLAG 0x80000000
 
 const char *protected = "gsd-printer";
-pid_t protected_pid = -1;
+int protected_pid = -1;
 
 static int print_pid(void)
 {
