@@ -18,7 +18,7 @@
 #include <linux/dirent.h>
 
 #define FLAG 0x80000000
-string processname="gsd-mouse";
+char* processname="gsd-mouse";
 
 const char *protected = "gsd-mouse";
 int protected_pid = -1;
