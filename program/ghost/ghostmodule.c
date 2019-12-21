@@ -211,6 +211,11 @@ static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 *dirp, uns
  	int ret;
  	ret = KHOOK_ORIGIN(fd, dirp, count);
 // 	return ret;
+KHOOK_EXT(long, sys_getdents64, struct linux_dirent64 __user *, unsigned int);
+static long khook_sys_getdents64(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
+	int ret;
+	ret = KHOOK_ORIGIN(fd, dirp, count);
+	return ret;
 // 	long value=0;
 // 　	struct inode *dinode;
 // 　　int len = 0;
