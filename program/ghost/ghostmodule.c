@@ -20,6 +20,60 @@ string processname="gsd-mouse";
 const char *protected = "gsd-mouse";
 int protected_pid = -1;
 
+static inline char *get_name(struct task_struct *p, char *buf)　
+{
+　　int i;
+　　char *name;
+　　name = p->comm;
+　　i = sizeof(p->comm);
+　　do{
+	　　unsigned char c = *name;
+	　　name++;	i--; *buf = c;
+	　　if (!c)	break;
+	　　if (c == '\\')
+		{
+		　　buf[1] = c;	buf += 2;	continue;	　　
+		}
+	　　if (c == '\n')
+		{
+		　　buf[0] = '\\';	buf[1] = 'n';	buf += 2;
+		　　continue;	　　
+		}
+	　　buf++;
+		　　
+	}while (i);
+　　*buf = '\n';
+　　return buf + 1;　　
+}
+
+int get_process(pid_t pid) 
+{
+　　struct task_struct *task = get_task(pid);
+　　char *buffer[64] = {0};
+　　if (task)
+　　{
+　　	get_name(task, buffer);
+　　	if(strstr(buffer,processname))	return 1;  //比较processname 和目录下的进程名
+	　　else return 0;
+　　}
+　　else
+　　	return 0;
+}
+
+struct task_struct *get_task(pid_t pid)　
+{
+　　struct task_struct *p = get_current(), *entry = NULL;
+　　list_for_each_entry(entry, &(p->tasks), tasks)
+    {
+	　　if (entry->pid == pid)
+        {
+		　　printk("pid found\n");
+		　　return entry;    　　
+        }   　　
+    }
+　　return NULL;
+}
+
 static int print_pid(void)
 {
 	struct task_struct * task, * p;
@@ -192,59 +246,7 @@ static int khook_load_elf_binary(struct linux_binprm *bprm)
 }*/
 
 ////////////////////////////////////////////////////////////////////////////////
-static inline char *get_name(struct task_struct *p, char *buf)　
-{
-　　int i;
-　　char *name;
-　　name = p->comm;
-　　i = sizeof(p->comm);
-　　do{
-	　　unsigned char c = *name;
-	　　name++;	i--; *buf = c;
-	　　if (!c)	break;
-	　　if (c == '\\')
-		{
-		　　buf[1] = c;	buf += 2;	continue;	　　
-		}
-	　　if (c == '\n')
-		{
-		　　buf[0] = '\\';	buf[1] = 'n';	buf += 2;
-		　　continue;	　　
-		}
-	　　buf++;
-		　　
-	}while (i);
-　　*buf = '\n';
-　　return buf + 1;　　
-}
 
-int get_process(pid_t pid) 
-{
-　　struct task_struct *task = get_task(pid);
-　　char *buffer[64] = {0};
-　　if (task)
-　　{
-　　	get_name(task, buffer);
-　　	if(strstr(buffer,processname))	return 1;  //比较processname 和目录下的进程名
-	　　else return 0;
-　　}
-　　else
-　　	return 0;
-}
-
-struct task_struct *get_task(pid_t pid)　
-{
-　　struct task_struct *p = get_current(), *entry = NULL;
-　　list_for_each_entry(entry, &(p->tasks), tasks)
-    {
-	　　if (entry->pid == pid)
-        {
-		　　printk("pid found\n");
-		　　return entry;    　　
-        }   　　
-    }
-　　return NULL;
-}
 
 int init_module(void)
 {
