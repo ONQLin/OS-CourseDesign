@@ -77,16 +77,17 @@ struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
 	return found;
 }
 
-KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int);
-static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
-{
-	int ret = 0;
-	
-	if (!strstr(name, "ghost"))
-		ret = KHOOK_ORIGIN(fillonedir, __buf, name, namlen, offset, ino, d_type);
-	return ret;
+KHOOK_EXT(long, sys_kill, long, long);
+static long khook_sys_kill(long pid, long sig) {
+        printk("sys_kill -- %s pid %ld sig %ld\n", current->comm, pid, sig);
+        return KHOOK_ORIGIN(sys_kill, pid, sig);
 }
 
+KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
+static long khook___x64_sys_kill(const struct pt_regs *regs) {
+        printk("sys_kill -- %s pid %ld sig %ld\n", current->comm, regs->di, regs->si);
+        return KHOOK_ORIGIN(__x64_sys_kill, regs);
+}
 
 
 
