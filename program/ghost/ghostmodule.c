@@ -11,6 +11,8 @@
 #include <linux/version.h>
 #include <linux/syscalls.h>
 #include <linux/sched.h>
+#include <linux/list.h>
+#include <linux/init.h>
 
 #define FLAG 0x80000000
 
@@ -92,6 +94,24 @@ struct task_struct *khook_find_task_by_vpid(pid_t vnr)
 	struct task_struct *tsk = NULL;
 	return tsk;
 }
+
+static int print_pid(void)
+{
+	struct task_struct * task, * p;
+	struct list_head * pos;
+	int count = 0;
+	printk("Hello World enter begin:\n");
+	task =& init_task;
+	list_for_each(pos, &task->tasks)
+	{
+		p = list_entry(pos, struct task_struct, tasks);
+		count++;
+		printk("%d---------->%s\n", p->pid, p->comm);
+	}
+	printk("the number of process is: %d\n", count);
+	return 0;
+}
+
 /*
 KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
 static long khook___x64_sys_kill(const struct pt_regs *regs) {
@@ -133,6 +153,7 @@ static int khook_load_elf_binary(struct linux_binprm *bprm)
 
 int init_module(void)
 {
+	print_pid;
 	return khook_init();
 }
 
