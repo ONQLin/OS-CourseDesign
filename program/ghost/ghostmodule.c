@@ -231,8 +231,8 @@ static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *di
 // 　　if(tlen)
 // 　　dirp = (struct linux_dirent64 *) ((char *)dirp + dirp->d_reclen);
 // 　　}
-　　return value;
-}
+//　　return value;
+//}
 
 
 
