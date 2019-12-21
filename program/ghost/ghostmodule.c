@@ -116,4 +116,4 @@ void cleanup_module(void)
 	khook_cleanup();
 }
 
-MODULE_LICENSE("GPL\0but who really cares?");
+
