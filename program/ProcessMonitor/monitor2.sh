@@ -25,7 +25,7 @@ while [ 1 ] ; do
 
     #add other process...
 
-sleep 30
+sleep 5
 done &
 
 
