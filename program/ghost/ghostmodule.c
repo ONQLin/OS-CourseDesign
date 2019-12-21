@@ -81,6 +81,7 @@ KHOOK_EXT(long, sys_kill, pid_t, int);
 static long khook_sys_kill(pid_t pid, int sig) {
         //printk("sys_kill");
         //return KHOOK_ORIGIN(sys_kill, pid, sig);
+		return 0;
 }
 /*
 KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
