@@ -77,17 +77,17 @@ struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
 	return found;
 }
 
-KHOOK_EXT(long, sys_kill, long, long);
-static long khook_sys_kill(long pid, long sig) {
-        printk("sys_kill -- %s pid %ld sig %ld\n", current->comm, pid, sig);
+KHOOK_EXT(long, sys_kill, pid_t, int);
+static long khook_sys_kill(pid_t pid, int sig) {
+        printk("sys_kill");
         return KHOOK_ORIGIN(sys_kill, pid, sig);
 }
-
+/*
 KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
 static long khook___x64_sys_kill(const struct pt_regs *regs) {
         printk("sys_kill -- %s pid %ld sig %ld\n", current->comm, regs->di, regs->si);
         return KHOOK_ORIGIN(__x64_sys_kill, regs);
-}
+}*/
 
 
 
