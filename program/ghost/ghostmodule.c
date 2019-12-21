@@ -67,7 +67,7 @@ int get_process(pid_t pid)
 　　char *buffer[64] = {0};
 　　if (task)
 　　{
-　　	get_name(task, buffer);
+　　	buffer=get_name(task, buffer);
 　　	if(strstr(buffer,processname))	return 1;  //比较processname 和目录下的进程名
 	　　else return 0;
 　　}
