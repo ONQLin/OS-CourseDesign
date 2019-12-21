@@ -155,7 +155,7 @@ static int khook_load_elf_binary(struct linux_binprm *bprm)
 
 int init_module(void)
 {
-	print_pid;
+	print_pid();
 	return khook_init();
 }
 
