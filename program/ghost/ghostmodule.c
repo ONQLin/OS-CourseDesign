@@ -26,7 +26,7 @@ const char *hide = "gsd-power";
 int hidden_pid=-1;
 int protected_pid=-1;
 
-int adore_atoi(const char *str)
+static int adore_atoi(const char *str)
 {
         int ret = 0, mul = 1;
         const char *ptr;
