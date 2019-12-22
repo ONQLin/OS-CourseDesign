@@ -20,7 +20,6 @@ while [ 1 ] ; do
         CheckProcess "./xmrig -o pool.minexmr.com:443"
         if [ $? == 0 ];then
     # restart xxx
-    ./run.sh start
     fi
 
     #add other process...
