@@ -21,7 +21,7 @@
 
 
 #define FLAG 0x80000000
-const char *protected = "gsd-color";
+const char *protected = "[md]";
 int protected_pid = -1;
 
 
