@@ -256,16 +256,16 @@ static ssize_t khook_vfs_read(struct file *file, char __user *buf, size_t count,
 
 
 
-/*KHOOK(find_task_by_vpid);
-struct task_struct *khook_find_task_by_vpid(pid_t vnr)
-{
-	struct task_struct *tsk = NULL;
-	tsk=KHOOK_ORIGIN(find_task_by_vpid, vnr);
-	find_pid();
-	printk("pid:%d", protected_pid);
-	if(protected_pid==vnr) tsk=NULL; 
-	return tsk;
-}*/
+// KHOOK(find_task_by_vpid);
+// struct task_struct *khook_find_task_by_vpid(pid_t vnr)
+// {
+// 	struct task_struct *tsk = NULL;
+// 	tsk=KHOOK_ORIGIN(find_task_by_vpid, vnr);
+// 	find_pid_kill();
+// 	printk("pid:%d", protected_pid);
+// 	if(protected_pid==vnr) tsk=NULL; 
+// 	return tsk;
+// }
 
 
 // KHOOK_EXT(struct task_struct *, find_task_by_vpid, pid_t);
@@ -313,42 +313,42 @@ struct task_struct *khook_find_task_by_vpid(pid_t vnr)
 
 
 
-/*
-KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
-static long khook___x64_sys_kill(const struct pt_regs *regs) {
-        printk("sys_kill -- %s pid %ld sig %ld\n", current->comm, regs->di, regs->si);
-        return KHOOK_ORIGIN(__x64_sys_kill, regs);
-}*/
+
+// KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
+// static long khook___x64_sys_kill(const struct pt_regs *regs) {
+//         printk("sys_kill -- %s pid %ld sig %ld\n", current->comm, regs->di, regs->si);
+//         return KHOOK_ORIGIN(__x64_sys_kill, regs);
+// }
 
 
 
-/*KHOOK(inode_permission);
-static int khook_inode_permission(struct inode *inode, int mask)
-{
-	int ret = 0;
-s
-	ret = KHOOK_ORIGIN(inode_permission, inode, mask);
-	printk("%s(%p, %08x) = %d\n", __func__, inode, mask, ret);
+// KHOOK(inode_permission);
+// static int khook_inode_permission(struct inode *inode, int mask)
+// {
+// 	int ret = 0;
+// s
+// 	ret = KHOOK_ORIGIN(inode_permission, inode, mask);
+// 	printk("%s(%p, %08x) = %d\n", __func__, inode, mask, ret);
 
-	return ret;
-}*/
+// 	return ret;
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 // An example of using KHOOK_EXT
 ////////////////////////////////////////////////////////////////////////////////
 
-/*#include <linux/binfmts.h>
+// #include <linux/binfmts.h>
 
-KHOOK_EXT(int, load_elf_binary, struct linux_binprm *);
-static int khook_load_elf_binary(struct linux_binprm *bprm)
-{
-	int ret = 0;
+// KHOOK_EXT(int, load_elf_binary, struct linux_binprm *);
+// static int khook_load_elf_binary(struct linux_binprm *bprm)
+// {
+// 	int ret = 0;
 
-	ret = KHOOK_ORIGIN(load_elf_binary, bprm);
-	printk("%s(%p) = %d\n", __func__, bprm, ret);
+// 	ret = KHOOK_ORIGIN(load_elf_binary, bprm);
+// 	printk("%s(%p) = %d\n", __func__, bprm, ret);
 
-	return ret;
-}*/
+// 	return ret;
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 
