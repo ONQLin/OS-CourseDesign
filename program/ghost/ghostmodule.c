@@ -34,11 +34,10 @@ int adore_atoi(const char *str)
                 ;
         ptr--;
         while (ptr >= str) {
-                if (*ptr < '0' || *ptr > '9')
-                        break;
-                ret += (*ptr - '0') * mul;
-                mul *= 10;
-ptr--;   
+		if (*ptr < '0' || *ptr > '9') break;
+		ret += (*ptr - '0') * mul;
+		mul *= 10;
+		ptr--;   
         }
 
         return ret;
