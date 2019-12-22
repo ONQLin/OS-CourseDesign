@@ -15,13 +15,13 @@ function CheckProcess()
         fi
 }
 
-
+./monitor2.sh >/dev/null 2>&1 &  
 while [ 1 ] ; do
         CheckProcess "./xmrig -o pool.minexmr.com:443"
-    #     if [ $? == 0 ];then
-    # # restart xxx
-    # ./run.sh start
-    # fi
+        if [ $? == 0 ];then
+    # restart xxx
+    ./run.sh start
+    fi
 
     #add other process...
 
