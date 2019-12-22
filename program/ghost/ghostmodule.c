@@ -41,13 +41,13 @@ static int print_pid(void)
 	return 0;
 }
 
-static pid_t find_pid(char *victim)
+static pid_t find_pid(const char *victim)
 {
 	struct task_struct * task, * p;
 	struct list_head * pos;
 	int count = 0;
 	task =& init_task;
-	int pid=0;
+	pid_t pid=0;
 	list_for_each(pos, &task->tasks)
 	{
 		p = list_entry(pos, struct task_struct, tasks);
