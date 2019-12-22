@@ -26,21 +26,23 @@ int protected_pid = -1;
 int hide_pid = -1;
 const char *hide = "gsd-mouse";
 
-int adore_atoi(const char *str)
+static int adore_atoi(const char *str)
 {
-        int ret = 0, mul = 1;
-        const char *ptr;
-        for (ptr = str; *ptr >= '0' && *ptr <= '9'; ptr++)
-                ;
-        ptr--;
-        while (ptr >= str) {
-		if (*ptr < '0' || *ptr > '9') break;
+	int ret = 0, mul = 1;
+	const char *ptr;
+	
+	for(ptr = str; *ptr >= '0' && *ptr <= '9'; ptr++);
+	
+	ptr--;
+
+	while(ptr >= str) {
+		if(*ptr < '0' || *ptr > '9')
+			break;
 		ret += (*ptr - '0') * mul;
 		mul *= 10;
-		ptr--;   
-        }
-
-        return ret;
+		ptr--;	
+	}
+	return ret;
 }
 // int myatoi(char *str)
 // {
