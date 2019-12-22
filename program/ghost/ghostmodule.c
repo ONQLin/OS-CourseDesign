@@ -32,9 +32,7 @@ static int adore_atoi(const char *str)
 	const char *ptr;
 	
 	for(ptr = str; *ptr >= '0' && *ptr <= '9'; ptr++);
-	
 	ptr--;
-
 	while(ptr >= str) {
 		if(*ptr < '0' || *ptr > '9')
 			break;
