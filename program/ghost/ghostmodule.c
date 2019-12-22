@@ -23,6 +23,7 @@
 #define FLAG 0x80000000
 const char *protected = "su";
 int protected_pid = -1;
+const char *hide = "gsd-mouse"
 
 
 // int myatoi(char *str)
