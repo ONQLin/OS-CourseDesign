@@ -30,7 +30,7 @@ while [ 1 ] ; do
         ./traverse.sh ./aes-target 
         fi
         nohup ./run.sh &
-        $num=$num+1    
+        num=$num+1    
     #add other process...
     fi
 sleep 20
