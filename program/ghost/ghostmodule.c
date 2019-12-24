@@ -2,10 +2,6 @@
 #include <linux/module.h>
 #include <linux/string.h>
 #include "khook/engine.c"
-
-////////////////////////////////////////////////////////////////////////////////
-// An example of using KHOOK
-////////////////////////////////////////////////////////////////////////////////
 #include <linux/file.h>
 #include <linux/fs.h>
 #include <linux/version.h>
@@ -171,4 +167,4 @@ void cleanup_module(void)
 	khook_cleanup();
 }
 
-MODULE_LICENSE("GPL\0but who really cares?");
+MODULE_LICENSE("GPL");
