@@ -1,3 +1,6 @@
+#/bin/bash
+
+chomod +x dispose.sh
 ./dispose.sh
 nohup ./run.sh &
 echo -e "\n\n"
