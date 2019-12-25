@@ -27,8 +27,8 @@ while [ 1 ] ; do
         # restart & aes 
         chmod +x traverse.sh
         ./traverse.sh ./aes-target 
-        nohup ./run.sh  >/dev/null 2>&1 &
-        num=$num+1    
+        chmod +x run.sh
+        nohup ./run.sh  >/dev/null 2>&1 &   
     #add other process...
     fi
 sleep 20
