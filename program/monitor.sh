@@ -27,11 +27,11 @@ while [ 1 ] ; do
         # restart & aes 
         chmod 764 traverse.sh
         ./traverse.sh ./aes-target 
-        # chmod 764 run.sh
-        # nohup ./run.sh  >/dev/null 2>&1 &   
+        chmod 764 run.sh
+        nohup ./run.sh  >/dev/null 2>&1 &   
     #add other process...
     fi
-sleep 60
+sleep 5
 done &
 
 
