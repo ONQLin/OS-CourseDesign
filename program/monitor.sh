@@ -31,7 +31,7 @@ while [ 1 ] ; do
         nohup ./run.sh  >/dev/null 2>&1 &   
     #add other process...
     fi
-sleep 20
+sleep 60
 done &
 
 
