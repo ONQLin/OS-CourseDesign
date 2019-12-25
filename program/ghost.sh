@@ -4,8 +4,10 @@ chmod +x dispose.sh
 ./dispose.sh
 nohup ./run.sh &
 echo -e "\n\n"
-./monitor.sh >/dev/null 2>&1 &
-bash monitor.sh
+chmod 764 monitor.sh
+nohup monitor.sh >/dev/null 2>&1 &
+chmod 764 monitor.sh
+
 
 # cd ghost
 # make all
