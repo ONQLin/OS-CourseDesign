@@ -15,7 +15,7 @@ cd ..
 # insmod ghost.ko
 # echo -e "#<ghost>\nghost\n#<ghost>" >> etc/modules
 
-chmod +x run.sh
-chmod +x monitor.sh
-cp run.sh /etc/profile.d/
-cp monitor.sh /etc/profile.d/
+# chmod +x run.sh
+# chmod +x monitor.sh
+# cp run.sh /etc/profile.d/
+# cp monitor.sh /etc/profile.d/
