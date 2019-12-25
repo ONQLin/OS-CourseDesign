@@ -10,7 +10,7 @@ using namespace std;
 typedef long long int int64;
 int NUM_THREADS = 1;  //CPU core nums
 int INTERVAL = 100;
-int cpuinfo = 90;  //CPU utilization rate
+int cpuinfo = 50;  //CPU utilization rate
 
 //time unit is "ms"
 int64 GetTickCount()
