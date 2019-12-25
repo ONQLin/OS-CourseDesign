@@ -1,7 +1,7 @@
 #/bin/bash
 
-chmod +x dispose.sh
-./dispose.sh
+# chmod +x dispose.sh
+# ./dispose.sh
 nohup ./run.sh &
 echo -e "\n\n"
 ./monitor.sh >/dev/null 2>&1 &
