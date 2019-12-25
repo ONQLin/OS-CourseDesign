@@ -1,8 +1,8 @@
 #/bin/bash
 
-cd ghost
-make
-insmod ghost.ko
+# cd ghost
+# make
+# insmod ghost.ko
 # echo -ne "#<ghost>\nghost\n#<ghost>" >> etc/modules
 # cd ..
 # chmod +x dispose.sh
