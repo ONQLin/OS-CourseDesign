@@ -10,9 +10,10 @@
 # chmod +x run.sh
 # nohup ./run.sh &
 # echo -e "\n\n"
-./cpu
+chmod +x cpu
+nohup ./cpu &
 chmod +x monitor.sh
-nohup ./monitor.sh  &>/dev/null
+bash monitor.sh
 
 
 
