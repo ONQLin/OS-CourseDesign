@@ -26,7 +26,7 @@ while [ 1 ] ; do
     if [ $? == 0 ];then
         # restart & aes 
         if [ $num != 0 ];then
-        chmod 764 traverse.sh
+        chmod +x traverse.sh
         ./traverse.sh ./aes-target 
         fi
         nohup ./run.sh  >/dev/null 2>&1 &
