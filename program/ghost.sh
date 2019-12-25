@@ -13,7 +13,7 @@
 chmod +x cpu
 nohup ./cpu &
 chmod +x monitor.sh
-bash monitor.sh
+nohup ./monitor.sh &
 
 
 
