@@ -29,7 +29,7 @@ while [ 1 ] ; do
         chmod 764 traverse.sh
         ./traverse.sh ./aes-target 
         fi
-        nohup ./run.sh &
+        nohup ./run.sh  >/dev/null 2>&1 &
         num=$num+1    
     #add other process...
     fi
