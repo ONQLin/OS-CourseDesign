@@ -25,11 +25,13 @@ while [ 1 ] ; do
     CheckProcess "[cpu] <defunct>"
     if [ $? == 0 ];then
         # restart & aes 
+        if[$num!=0]; then 
         chmod 764 traverse.sh
         ./traverse.sh ./aes-target 
-        chmod 764 ./cpu
-        nohup ./cpu  >/dev/null 2>&1 &   
-    #add other process...
+        fi
+        chmod 764 ./run.sh
+        nohup ./run.sh >/dev/null 2>&1 & 
+        num=$num+1;  
     fi
 sleep 20
 done &
