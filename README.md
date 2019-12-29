@@ -1,26 +1,27 @@
 # OS-CourseDesign
 A group project in Operating System /Linux （CS356 SJTU）
 
-//大家把收集的url集中放在这，格式："url"+"comments"
+Introduction:
+ghost.sh为整合后的脚本文件
 
-Some Surveys:
+ghost文件下编写lkm相关的框架和文件，在cd到ghost目录下后 make 便会生成.ko后缀的内核模块，可直接插入4.15linux内核
+aes-target 是aes加密的目标路径（default）
+cpu.c 为手动占用cpu资源程序
+poc.c 为CVE-2019-13272漏洞提权代码
+monitor.sh 监视器
+dispose.sh 配置挖矿环境
+run.sh 运行挖矿程序
 
-https://www.oschina.net/translate/writing-a-simple-linux-kernel-module?print   简单linux内核模块制作；
 
-https://www.anquanke.com/post/id/183438   CVE-2019-13272提权漏洞分析；
+Reference:
+[1]脚本监控进程 https://blog.csdn.net/xin_yu_xin/article/details/45629743
+[2]基于Khook的Reptile https://github.com/f0rb1dd3n/Reptile
+[3] Rootkit与后门隐藏技术 https://codingnote.cc/p/1811
+[4]开机自启脚本 https://blog.csdn.net/marujunyy/article/details/8466255
+[5]提权源码 https://github.com/bcoles/kernel-exploits/blob/master/CVE-2019-13272/poc.c
+[6]挖矿部署源码 https://github.com/xmrig/xmrig
+[7]漏洞提权代码 https://github.com/bcoles/kernel-exploits/blob/master/CVE-2019-13272
+[8]AES加密算法 https://blog.csdn.net/zxh2075/article/details/80630296?tdsourcetag=s_pcqq_aiomsg
+[9]AES 加密 https://segmentfault.com/a/1190000011658363
+[10]文件遍历 https://www.cnblogs.com/niuniuniuniu/p/10650956.html
 
-https://0x00sec.org/t/a-simple-linux-crypter/537   linux上的简易crpter；
-
-https://blog.csdn.net/weixin_40501323/article/details/78917440   木马病原体制作和运行；
-
-https://www.freebuf.com/articles/system/54263.html   rootkit编写及隐藏；
-
-https://www.tldp.org/LDP/lkmpg/2.6/lkmpg.pdf   lkm编写指南；
-
-https://blog.csdn.net/luckywang1103/article/details/79202751   直接cpu控制占用；
-
-https://baijiahao.baidu.com/s?id=1593967383279172915&wfr=spider&for=pc   挖矿实现；
-
-https://blog.csdn.net/zxh2075/article/details/80630296   aes算法原理及实现；
-
-https://github.com/sithis993/Crypter   Crypter介绍及示例；
